@@ -1,11 +1,14 @@
 <template>
-    <span>Index</span>
+    <DateInfo></DateInfo>
 </template>
 
 <script lang="ts">
     import {Component, Vue} from "vue-property-decorator";
+    import DateInfo from "@/components/DateInfo.vue";
 
-    @Component
+    @Component({
+        components: {DateInfo}
+    })
     export default class Index extends Vue {
 
     };
