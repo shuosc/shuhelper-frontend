@@ -9,6 +9,7 @@ import Default from '@/layouts/default.vue';
 import MiddleBox from '@/layouts/middleBox.vue';
 // @ts-ignore
 import FlatSurfaceShader from 'vue-flat-surface-shader';
+import '@/plugins/autoUpdateTime';
 
 Vue.component('default', Default);
 Vue.component('middleBox', MiddleBox);

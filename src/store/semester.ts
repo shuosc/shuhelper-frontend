@@ -2,13 +2,7 @@ import {Action, Module, Mutation, VuexModule} from 'vuex-module-decorators';
 import Axios from '@/tools/axios';
 import {fromNullable, Option} from 'fp-ts/lib/Option';
 import {format, isWithinInterval} from 'date-fns';
-
-interface Semester {
-    id: string,
-    name: string,
-    start: Date,
-    end: Date
-}
+import {Semester} from '@/model/semester/semester';
 
 @Module({name: 'semester'})
 export default class SemesterModule extends VuexModule {

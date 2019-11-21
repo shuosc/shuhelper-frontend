@@ -1,23 +1,25 @@
 <template>
     <v-card class="pa-0">
-        faq
-        <!--        <v-card-title class="pa-0" primary-title>-->
-        <!--            <v-container class="pa-3">-->
+        <v-card-text class="pa-0" primary-title>
+            <v-row class="pa-3">
+                <v-col class="d-flex justify-center align-center" cols="1">
+                    <v-avatar>
+                        <v-icon class="white--text blue" medium>mdi-calendar-check</v-icon>
+                    </v-avatar>
+                </v-col>
+                <v-divider class="mx-3" inset vertical></v-divider>
+                <v-col cols="9">
+                    <v-row>
+                        <v-col cols="12">
+                            今天是{{format(dateTimeStore.now, "yyyy年MM月dd日 E", {locale: zhCN})}}
+                        </v-col>
+                    </v-row>
+                </v-col>
+            </v-row>
+        </v-card-text>
         <!--                <v-layout align-center row wrap>-->
-        <!--                    <v-flex fill-height xs1>-->
-        <!--                        <v-layout align-center justify-center>-->
-        <!--                            <v-avatar :size="avatarSize()">-->
-        <!--                                <v-icon class="white&#45;&#45;text blue" medium>event</v-icon>-->
-        <!--                            </v-avatar>-->
-        <!--                        </v-layout>-->
-        <!--                    </v-flex>-->
-        <!--                    <v-divider class="mx-3" inset vertical>-->
-        <!--                    </v-divider>-->
         <!--                    <v-flex xs9>-->
         <!--                        <v-layout row wrap>-->
-        <!--                            <v-flex xs12>-->
-        <!--                                今天是{{format(now,"yyyy年MM月dd日")}} 周{{dayNumberToChinese(now.getDay()).toNullable()}}-->
-        <!--                            </v-flex>-->
         <!--                            <v-flex v-if="currentDateInSemester.isSome()" xs12>-->
         <!--                                是 {{currentDateInSemester.map(it => it.semester.name).toNullable()}}-->
         <!--                                <template v-if="currentDateInSemester.map(getWorkWeekIndex).getOrElse(0) !== 0">-->
@@ -52,17 +54,26 @@
     import {Component, Vue} from "vue-property-decorator";
     import {getModule} from "vuex-module-decorators";
     import SemesterModule from "@/store/semester";
+    import {format} from "date-fns";
+    import {zhCN} from "date-fns/locale";
+    import DateTimeModule from "@/store/dateTime";
 
-    @Component
+    @Component({
+        methods: {format}
+    })
     export default class DateInfo extends Vue {
+        private readonly zhCN = zhCN;
+        private dateTimeStore = getModule(DateTimeModule, this.$store);
+        private semesterStore = getModule(SemesterModule, this.$store);
+
         private mounted() {
-            const semesterStore = getModule(SemesterModule, this.$store);
-            semesterStore.fetch();
-            // .then(() => console.log(semesterStore.getByDateTime(addDays(new Date(), 30))));
+            this.semesterStore.fetch();
         }
     };
 </script>
 
 <style scoped>
-
+    .v-card__text {
+        font-size: 1em;
+    }
 </style>
