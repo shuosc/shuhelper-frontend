@@ -5,9 +5,14 @@ import DateTimeModule from '@/store/dateTime';
 
 Vue.use(Vuex);
 
-export default new Vuex.Store({
+const store = new Vuex.Store({
     modules: {
         semester: SemesterModule,
         dateTime: DateTimeModule
     },
 });
+
+store.watch((state, getters) => getters['dateTime/now'], (nowDateTime) => {
+    store.dispatch('semester/fetchByDateTime', nowDateTime);
+});
+export default store;

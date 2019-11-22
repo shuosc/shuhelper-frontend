@@ -24,6 +24,7 @@
     "array-type": [
       true,
       "generic"
-    ]
+    ],
+    "no-namespace": false
   }
 }

@@ -1,10 +1,10 @@
 import {Action, Module, Mutation, VuexModule} from 'vuex-module-decorators';
 import Axios from '@/tools/axios';
-import {fromNullable, Option} from 'fp-ts/lib/Option';
+import {fromNullable, isSome, map, none, Option, some} from 'fp-ts/lib/Option';
 import {format, isWithinInterval} from 'date-fns';
 import {Semester} from '@/model/semester/semester';
 
-@Module({name: 'semester'})
+@Module({name: 'semester', namespaced: true})
 export default class SemesterModule extends VuexModule {
     private semesters: Map<string, Semester> = new Map<string, Semester>();
 
@@ -20,15 +20,23 @@ export default class SemesterModule extends VuexModule {
     }
 
     @Mutation
-    public addSemester(semester: Semester) {
-        this.semesters.set(semester.id, semester);
+    public addSemester(semester: Option<Semester>) {
+        map((it: Semester) => this.semesters.set(it.id, it))(semester);
     }
 
     @Action({commit: 'addSemester'})
-    public async fetch(date: Date | 'now' = 'now') {
-        const result: { data: Semester } = await new Promise((resolve) =>
-            Axios.get(`api/semester?date=${date === 'now' ? 'now' : format(date, 'yyyy-MM-dd')}`)
-                .then(resolve));
-        return result.data;
+    public async fetchByDateTime(date: Date | 'now' = 'now') {
+        if (date !== 'now' && isSome(this.getByDateTime(date))) {
+            return this.getByDateTime(date);
+        }
+        try {
+            const result: { data: Semester } = await new Promise((resolve, reject) =>
+                Axios.get(`api/semester?date=${date === 'now' ? 'now' : format(date, 'yyyy-MM-dd')}`)
+                    .then(resolve)
+                    .catch(reject));
+            return some(result.data);
+        } catch (e) {
+            return none;
+        }
     }
 }
