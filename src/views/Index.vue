@@ -4,7 +4,7 @@
 
 <script lang="ts">
     import {Component, Vue} from "vue-property-decorator";
-    import DateInfo from "@/components/DateInfo.vue";
+    import DateInfo from "@/components/index/dateInfo.vue";
 
     @Component({
         components: {DateInfo}

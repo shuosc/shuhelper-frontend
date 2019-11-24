@@ -32,8 +32,8 @@ export default class DateTimeModule extends VuexModule {
         if (this.intervalId === 0) {
             if (process.env.NODE_ENV === 'development') {
                 this.intervalId = setInterval(() => {
-                    this.nowBuffer = addHours(this.nowBuffer, 3);
-                }, 125);
+                    this.nowBuffer = addHours(this.nowBuffer, 1);
+                }, 1000);
             } else {
                 this.intervalId = setInterval(() => {
                     this.nowBuffer = new Date();

@@ -25,6 +25,8 @@
       true,
       "generic"
     ],
-    "no-namespace": false
+    "no-namespace": false,
+    "max-line-length": false,
+    "no-bitwise": false
   }
 }

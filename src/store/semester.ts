@@ -29,6 +29,9 @@ export default class SemesterModule extends VuexModule {
         if (date !== 'now' && isSome(this.getByDateTime(date))) {
             return this.getByDateTime(date);
         }
+        if (date === 'now' && isSome(this.getByDateTime(new Date()))) {
+            return this.getByDateTime(new Date());
+        }
         try {
             const result: { data: Semester } = await new Promise((resolve, reject) =>
                 Axios.get(`api/semester?date=${date === 'now' ? 'now' : format(date, 'yyyy-MM-dd')}`)

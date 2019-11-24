@@ -2,11 +2,15 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import SemesterModule from '@/store/semester';
 import DateTimeModule from '@/store/dateTime';
+import UserModule from '@/store/user';
+import CourseModule from '@/store/course';
 
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
     modules: {
+        user: UserModule,
+        course: CourseModule,
         semester: SemesterModule,
         dateTime: DateTimeModule
     },

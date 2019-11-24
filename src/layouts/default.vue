@@ -61,7 +61,7 @@
         private title = "SHUHelper";
         private items = [
             {icon: "school", title: "首页", to: "/"},
-            {icon: "calendar", title: "日程", to: "/schedule"}
+            {icon: "calendar", title: "日程", to: "/school-calendar"}
         ];
 
         private auth() {

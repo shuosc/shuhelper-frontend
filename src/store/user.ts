@@ -7,9 +7,9 @@ interface User {
     name: string
 }
 
-@Module
+@Module({name: 'user', namespaced: true})
 export default class UserModule extends VuexModule {
-    public user: Option<User> = none;
+    private user: Option<User> = none;
 
     @Mutation
     public setUser(user: User) {
@@ -17,7 +17,21 @@ export default class UserModule extends VuexModule {
     }
 
     @Action({commit: 'setUser'})
-    public async login(username: string, password: string) {
-        return await Axios.post('auth/login/shu-course-proxy', {username, password});
+    public async login(info: { username: string, password: string }) {
+        const courseSelectionUrl = (await new Promise((resolve, reject) => {
+            Axios.get('api/course-selection-url?id=11')
+                .then(resolve).catch(reject);
+        }) as { data: { url: string } }).data.url;
+        const token = (await new Promise((resolve, reject) => Axios.post('auth/login/shu-course-proxy', {
+            from_url: courseSelectionUrl,
+            username: info.username,
+            password: info.password
+        }).then(resolve).catch(reject)) as { data: string }).data;
+        Axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+        window.localStorage.setItem('token', token);
+        return (await new Promise((resolve, reject) => {
+            Axios.get(`api/student?id=${info.username}`)
+                .then(resolve).catch(reject);
+        }) as { data: { id: string, name: string } }).data;
     }
 }
