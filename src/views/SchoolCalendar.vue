@@ -3,6 +3,7 @@
         <Calendar :value="this.date"
                   @update:value="update"
         ></Calendar>
+        <CourseTable :value="this.date"></CourseTable>
     </v-card>
 </template>
 
@@ -15,9 +16,10 @@
     import {Semester} from "@/model/semester/semester";
     import {map} from "fp-ts/lib/Option";
     import {eachDayOfInterval, endOfMonth, startOfMonth} from "date-fns";
+    import CourseTable from "@/components/schoolCalendar/courseTable.vue";
 
     @Component({
-        components: {Calendar}
+        components: {CourseTable, Calendar}
     })
     export default class SchoolCalendar extends Vue {
         private date = new Date();
