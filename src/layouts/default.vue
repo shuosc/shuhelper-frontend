@@ -18,7 +18,7 @@
                     </v-list-item-avatar>
                     <v-list-item-content>
                         <v-list-item-title class="d-flex justify-space-between align-center">
-                            <span class="username">{{'游客'}}</span>
+                            <span class="username">{{pipe(userStore.user,map((it) => it.name),getOrElse(() => '游客'))}}</span>
                             <v-btn @click="auth" small text>
                                 {{'登录'}}
                             </v-btn>
@@ -53,12 +53,20 @@
 
 <script lang="ts">
     import {Component, Vue} from "vue-property-decorator";
+    import UserModule from "@/store/user";
+    import {getModule} from "vuex-module-decorators";
+    import {getOrElse, map} from "fp-ts/lib/Option";
+    import {pipe} from "fp-ts/lib/pipeable";
 
-    @Component
+    @Component({
+        methods: {getOrElse, map, pipe}
+    })
     export default class Default extends Vue {
         private drawer = true;
         private miniVariant = false;
         private title = "SHUHelper";
+        private userStore = getModule(UserModule, this.$store);
+
         private items = [
             {icon: "school", title: "首页", to: "/"},
             {icon: "calendar", title: "日程", to: "/school-calendar"}

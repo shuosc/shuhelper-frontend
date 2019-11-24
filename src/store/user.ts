@@ -2,14 +2,14 @@ import {Action, Module, Mutation, VuexModule} from 'vuex-module-decorators';
 import {none, Option, some} from 'fp-ts/lib/Option';
 import Axios from '@/tools/axios';
 
-interface User {
+export interface User {
     id: string,
     name: string
 }
 
 @Module({name: 'user', namespaced: true})
 export default class UserModule extends VuexModule {
-    private user: Option<User> = none;
+    public user: Option<User> = none;
 
     @Mutation
     public setUser(user: User) {
