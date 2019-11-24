@@ -1,6 +1,7 @@
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = {
+    publicPath: '/shuhelper/',
     transpileDependencies: [
         "vuetify",
         'vuex-module-decorators'
