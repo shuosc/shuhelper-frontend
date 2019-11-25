@@ -18,12 +18,28 @@
                 ref="calendar"
                 type="month"
                 v-model="stringValue">
-            <template v-slot:day="day">
-                <div class="d-flex justify-center mb-1">
+            <template v-slot:day-label="date">
+                <div :class="{selected:date.date === format(value, 'yyyy-MM-dd')}"
+                     @click="clicked(date)">
+                    <div>{{date.day}}</div>
+                    <div class="d-flex justify-center mb-1" v-if="
+                    !pipe(semesterStore.getByDateTime(parse(date.date, 'yyyy-MM-dd', dateTimeStore.now)),
+                        map(semester => {
+                            return DateTimeInSemesterService.isHoliday({
+                                dateTime: parse(date.date, 'yyyy-MM-dd', dateTimeStore.now),
+                                semester: semester
+                            });
+                        }),
+                        getOrElse(() => true)
+                    )">
                     <span :style="{background:toNullable(courseStore.getById(classObject.course_by_teacher_id)).color}"
-                          class="dot"
-                          v-for="classObject in getClasses(day.date)">
+                          class="dot" v-for="classObject in getClasses(date.date)">
                     </span>
+                    </div>
+                    <div class="holiday-text"
+                         v-else-if="isSome(semesterStore.getByDateTime(parse(date.date, 'yyyy-MM-dd', dateTimeStore.now)))">
+                        放假
+                    </div>
                 </div>
             </template>
         </v-calendar>
@@ -39,10 +55,11 @@
     import SemesterModule from "@/store/semester";
     import {pipe} from "fp-ts/lib/pipeable";
     import {Semester} from "@/model/semester/semester";
-    import {getOrElse, map, toNullable} from "fp-ts/lib/Option";
+    import {getOrElse, isSome, map, toNullable} from "fp-ts/lib/Option";
+    import {DateTimeInSemesterService} from "@/model/semester/dateTimeInSemester";
 
     @Component({
-        methods: {format, parse, toNullable}
+        methods: {format, parse, toNullable, pipe, map, getOrElse, isSome}
     })
     export default class Calendar extends Vue {
         @Prop() public value!: Date;
@@ -50,8 +67,10 @@
         private stringValue = format(new Date(), "yyyy-MM-dd");
         private courseStore = getModule(CourseModule, this.$store);
         private semesterStore = getModule(SemesterModule, this.$store);
+        private DateTimeInSemesterService = DateTimeInSemesterService;
 
-        public clicked() {
+        public clicked(day: { date: string }) {
+            this.stringValue = day.date;
             this.$emit("update:value", parse(this.stringValue, "yyyy-MM-dd", this.dateTimeStore.now));
         }
 
@@ -75,6 +94,15 @@
         margin-left: 1px;
         margin-right: 1px;
     }
+
+    .selected {
+        border: solid 1px #9e9e9e;
+        border-radius: 3px;
+    }
+
+    .holiday-text {
+        font-size: 10px;
+    }
 </style>
 <!--not scoped-->
 <style lang="stylus">
@@ -84,7 +112,7 @@
         }
 
         .v-calendar-weekly__day {
-            border: none;
+            border: none !important;
             border-radius: 3px;
             margin: 2px;
 
@@ -102,25 +130,13 @@
 
             & .v-btn {
                 margin-bottom: 2px;
-                height: 25px;
-                width: 25px;
-
-                &:before {
-                    display: none;
-                }
-
-                & .v-ripple__container {
-                    display: none;
-                }
-            }
-
-            &:hover {
-                border: solid 1px #626262;
+                height: 30px;
+                width: 30px;
             }
         }
 
         .v-calendar-weekly__day.v-outside {
-            background: transparent;
+            background: transparent !important;
             opacity: 0.1;
         }
     }

@@ -3,7 +3,6 @@
         <v-list-item
                 :key="classObject.course_by_teacher_id+classObject.begin_sector"
                 @click=""
-                avatar
                 v-for="classObject in classes">
             <v-list-item-avatar>
                 <v-icon :style="{background: toNullable(courseStore.getById(classObject.course_by_teacher_id)).color}">
@@ -16,8 +15,11 @@
                 <v-list-item-subtitle>
                     <v-container class="class-info">
                         <v-row>
-                            <v-col class="pa-0" cols="4">{{classObject.begin_sector}}-{{classObject.end_sector}}</v-col>
-                            <v-col class="pa-0" cols="8">{{classObject.place}}</v-col>
+                            <v-col class="pa-0" cols="3">{{classObject.begin_sector}}-{{classObject.end_sector}}</v-col>
+                            <v-col class="pa-0" cols="6">
+                                {{format(SectorRepository.sectors[classObject.begin_sector-1].start,'kk:mm')}}-{{format(SectorRepository.sectors[classObject.end_sector-1].end,'kk:mm')}}
+                            </v-col>
+                            <v-col class="pa-0" cols="3">{{classObject.place}}</v-col>
                         </v-row>
                     </v-container>
                 </v-list-item-subtitle>
@@ -35,6 +37,7 @@
     import {pipe} from "fp-ts/lib/pipeable";
     import {Semester} from "@/model/semester/semester";
     import {getOrElse, map, toNullable} from "fp-ts/lib/Option";
+    import {SectorRepository} from "@/model/sector";
 
     @Component({
         methods: {format, parse, toNullable}
@@ -43,6 +46,7 @@
         @Prop() public value!: Date;
         private courseStore = getModule(CourseModule, this.$store);
         private semesterStore = getModule(SemesterModule, this.$store);
+        private SectorRepository = SectorRepository;
 
         get classes(): Array<Class> {
             return pipe(
