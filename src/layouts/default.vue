@@ -20,7 +20,7 @@
                         <v-list-item-title class="d-flex justify-space-between align-center">
                             <span class="username">{{pipe(userStore.user,map((it) => it.name),getOrElse(() => '游客'))}}</span>
                             <v-btn @click="auth" small text>
-                                {{'登录'}}
+                                {{isSome(userStore.user)?'退出':'登录'}}
                             </v-btn>
                         </v-list-item-title>
                     </v-list-item-content>
@@ -55,11 +55,11 @@
     import {Component, Vue} from "vue-property-decorator";
     import UserModule from "@/store/user";
     import {getModule} from "vuex-module-decorators";
-    import {getOrElse, map} from "fp-ts/lib/Option";
+    import {getOrElse, isSome, map} from "fp-ts/lib/Option";
     import {pipe} from "fp-ts/lib/pipeable";
 
     @Component({
-        methods: {getOrElse, map, pipe}
+        methods: {getOrElse, map, pipe, isSome}
     })
     export default class Default extends Vue {
         private drawer = true;
@@ -73,7 +73,12 @@
         ];
 
         private auth() {
-            this.$router.push("/login");
+            if (isSome(this.userStore.user)) {
+                localStorage.removeItem("token");
+                window.location.assign("/");
+            } else {
+                this.$router.push("/login");
+            }
         }
     };
 </script>

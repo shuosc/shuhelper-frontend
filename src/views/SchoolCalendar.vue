@@ -17,11 +17,9 @@
     import {map} from "fp-ts/lib/Option";
     import {eachDayOfInterval, endOfMonth, startOfMonth} from "date-fns";
     import CourseTable from "@/components/schoolCalendar/courseTable.vue";
-    import LoginRequired from "@/mixins/loginRequired";
 
     @Component({
-        components: {CourseTable, Calendar},
-        mixins: [LoginRequired]
+        components: {CourseTable, Calendar}
     })
     export default class SchoolCalendar extends Vue {
         private date = new Date();

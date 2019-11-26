@@ -17,6 +17,16 @@ export default class UserModule extends VuexModule {
     }
 
     @Action({commit: 'setUser'})
+    public async restoreLogin(token: string) {
+        Axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+        window.localStorage.setItem('token', token);
+        return (await new Promise((resolve, reject) => {
+            Axios.get(`api/student`)
+                .then(resolve).catch(reject);
+        }) as { data: { id: string, name: string } }).data;
+    }
+
+    @Action({commit: 'setUser'})
     public async login(info: { username: string, password: string }) {
         const courseSelectionUrl = (await new Promise((resolve, reject) => {
             Axios.get('api/course-selection-url?id=11')
@@ -30,7 +40,7 @@ export default class UserModule extends VuexModule {
         Axios.defaults.headers.common.Authorization = `Bearer ${token}`;
         window.localStorage.setItem('token', token);
         return (await new Promise((resolve, reject) => {
-            Axios.get(`api/student?id=${info.username}`)
+            Axios.get(`api/student`)
                 .then(resolve).catch(reject);
         }) as { data: { id: string, name: string } }).data;
     }

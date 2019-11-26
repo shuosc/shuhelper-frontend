@@ -35,8 +35,8 @@ export default class SemesterModule extends VuexModule {
         try {
             const result: { data: Semester } = await new Promise((resolve, reject) =>
                 Axios.get(`api/semester?date=${date === 'now' ? 'now' : format(date, 'yyyy-MM-dd')}`)
-                    .then(resolve)
-                    .catch(reject));
+                    .then((data) => resolve(data))
+                    .catch(() => reject('sth error with network')));
             return some(result.data);
         } catch (e) {
             return none;

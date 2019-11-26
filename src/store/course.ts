@@ -65,23 +65,27 @@ export default class CourseModule extends VuexModule {
 
     @Action
     public async fetchBySemester(semesterId: string) {
-        if (Array.from(this.courses.values())
-            .find((it) => it.on_semester_id === semesterId) !== undefined) {
-            return;
-        }
-        const ids = (await new Promise((resolve, reject) =>
-            Axios.get(`api/student-courses?semester_id=${semesterId}`)
-                .then(resolve).catch(reject)) as { data: Array<string> }).data;
-        if (Array.from(this.courses.values())
-            .find((it) => it.on_semester_id === semesterId) !== undefined) {
-            return;
-        }
-        ids.map((id) => {
-            if (Array.from(this.courses.values()).find((it) => it.id === id) !== undefined) {
+        try {
+            if (Array.from(this.courses.values())
+                .find((it) => it.on_semester_id === semesterId) !== undefined) {
                 return;
             }
-            Axios.get(`api/course?id=${id}`)
-                .then((response: { data: Course }) => this.context.commit('addCourse', response.data));
-        });
+            const ids = (await new Promise((resolve, reject) =>
+                Axios.get(`api/student-courses?semester_id=${semesterId}`)
+                    .then(resolve).catch(reject)) as { data: Array<string> }).data;
+            if (Array.from(this.courses.values())
+                .find((it) => it.on_semester_id === semesterId) !== undefined) {
+                return;
+            }
+            ids.map((id) => {
+                if (Array.from(this.courses.values()).find((it) => it.id === id) !== undefined) {
+                    return;
+                }
+                Axios.get(`api/course?id=${id}`)
+                    .then((response: { data: Course }) => this.context.commit('addCourse', response.data));
+            });
+        } catch (e) {
+            /*nothing here*/
+        }
     }
 }
