@@ -17,3 +17,10 @@
         }
     });
 </script>
+
+<style>
+    /* fix safari's silly bug */
+    .v-overlay {
+        display: none !important;
+    }
+</style>

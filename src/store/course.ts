@@ -28,10 +28,10 @@ export interface Course {
 
 @Module({name: 'course', namespaced: true})
 export default class CourseModule extends VuexModule {
-    private courses = new Map<string, Course>();
+    public courses: Array<Course> = [];
 
     get getById(): (id: string) => Option<Course> {
-        return (id: string) => fromNullable(this.courses.get(id));
+        return (id: string) => fromNullable(this.courses.find((it) => it.id === id));
     }
 
     get getClassesByDateTimeInSemester(): (dateTimeInSemester: DateTimeInSemester) => Array<Class> {
@@ -55,8 +55,8 @@ export default class CourseModule extends VuexModule {
 
     @Mutation
     public addCourse(course: Course) {
-        if (this.courses.get(course.id) === undefined) {
-            this.courses.set(course.id, {
+        if (this.courses.find((it) => it.id === course.id) === undefined) {
+            this.courses.push({
                 ...course,
                 color: nextBeautifulLightColor()
             });
@@ -85,7 +85,7 @@ export default class CourseModule extends VuexModule {
                     .then((response: { data: Course }) => this.context.commit('addCourse', response.data));
             });
         } catch (e) {
-            /*nothing here*/
+            /*pass*/
         }
     }
 }

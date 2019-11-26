@@ -40,13 +40,20 @@
     import {SectorRepository} from "@/model/sector";
 
     @Component({
-        methods: {format, parse, toNullable}
+        methods: {format, parse, toNullable, map, pipe}
     })
     export default class CourseTable extends Vue {
         @Prop() public value!: Date;
         private courseStore = getModule(CourseModule, this.$store);
         private semesterStore = getModule(SemesterModule, this.$store);
         private SectorRepository = SectorRepository;
+
+        get dateTimeInSemester() {
+            return {
+                semester: toNullable(this.semesterStore.getByDateTime(this.value)),
+                dateTime: this.value
+            };
+        }
 
         get classes(): Array<Class> {
             return pipe(

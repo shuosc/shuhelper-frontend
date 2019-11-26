@@ -1,8 +1,6 @@
 <template>
     <v-card class="calendar-container">
-        <Calendar :value="this.date"
-                  @update:value="update"
-        ></Calendar>
+        <Calendar :value="this.date" @update:value="update"></Calendar>
         <CourseTable :value="this.date"></CourseTable>
     </v-card>
 </template>
@@ -14,15 +12,17 @@
     import SemesterModule from "@/store/semester";
     import CourseModule from "@/store/course";
     import {Semester} from "@/model/semester/semester";
-    import {map} from "fp-ts/lib/Option";
+    import {isSome, map, toNullable} from "fp-ts/lib/Option";
     import {eachDayOfInterval, endOfMonth, startOfMonth} from "date-fns";
     import CourseTable from "@/components/schoolCalendar/courseTable.vue";
+    import DateTimeModule from "@/store/dateTime";
 
     @Component({
         components: {CourseTable, Calendar}
     })
     export default class SchoolCalendar extends Vue {
         private date = new Date();
+        private dateTimeStore = getModule(DateTimeModule, this.$store);
 
         public async fetchCoursesForDate(date: Date) {
             const semesterModule = getModule(SemesterModule, this.$store);
@@ -30,7 +30,9 @@
             const courseModule = getModule(CourseModule, this.$store);
             const semesterId = map((semesterObject: Semester) => semesterObject.id)(semester);
             try {
-                await map(async (id: string) => await courseModule.fetchBySemester(id))(semesterId);
+                if (isSome(semesterId)) {
+                    await courseModule.fetchBySemester(toNullable(semesterId) as string);
+                }
             } catch (e) {
                 await this.$router.push("login");
             }
@@ -41,12 +43,16 @@
                 start: startOfMonth(newDate),
                 end: endOfMonth(newDate)
             };
-            await Promise.all(eachDayOfInterval(month).map(this.fetchCoursesForDate));
+            // do not use Promise.all here
+            // or it'll request already existed semester's courses
+            for (const date of eachDayOfInterval(month)) {
+                await this.fetchCoursesForDate(date);
+            }
             this.date = newDate;
         }
 
         private mounted() {
-            this.update(this.date);
+            this.update(this.dateTimeStore.now);
         }
     };
 </script>

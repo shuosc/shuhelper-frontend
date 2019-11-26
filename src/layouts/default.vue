@@ -75,7 +75,7 @@
         private auth() {
             if (isSome(this.userStore.user)) {
                 localStorage.removeItem("token");
-                window.location.assign("/");
+                window.location.assign("/shuhelper/");
             } else {
                 this.$router.push("/login");
             }

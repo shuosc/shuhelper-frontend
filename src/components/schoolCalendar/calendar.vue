@@ -19,9 +19,10 @@
                 type="month"
                 v-model="stringValue">
             <template v-slot:day-label="date">
-                <div :class="{selected:date.date === format(value, 'yyyy-MM-dd')}"
+                <div :class="{selected:date.date === format(value, 'yyyy-MM-dd'),
+                                today: date.date === format(dateTimeStore.now,'yyyy-MM-dd')}"
                      @click="clicked(date)">
-                    <div>{{date.day}}</div>
+                    <div class="date"><span>{{date.day}}</span></div>
                     <div class="d-flex justify-center mb-1" v-if="
                     !pipe(semesterStore.getByDateTime(parse(date.date, 'yyyy-MM-dd', dateTimeStore.now)),
                         map(semester => {
@@ -102,6 +103,10 @@
 
     .holiday-text {
         font-size: 10px;
+    }
+
+    .today span {
+        color: #00b0ff;
     }
 </style>
 <!--not scoped-->
