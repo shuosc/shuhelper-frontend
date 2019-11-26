@@ -62,7 +62,7 @@
         methods: {getOrElse, map, pipe, isSome}
     })
     export default class Default extends Vue {
-        private drawer = true;
+        private drawer = false;
         private miniVariant = false;
         private title = "SHUHelper";
         private userStore = getModule(UserModule, this.$store);
