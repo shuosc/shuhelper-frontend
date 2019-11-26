@@ -139,5 +139,9 @@
             background: transparent !important;
             opacity: 0.1;
         }
+
+        .v-calendar-weekly__week {
+            height: unset;
+        }
     }
 </style>
