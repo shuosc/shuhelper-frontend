@@ -87,8 +87,11 @@
                                                 </v-col>
                                                 <template v-if="isSome(nextClass)">
                                                     <v-col class="pa-0" cols="12" md="3" sm="4">你下节课要上的是</v-col>
-                                                    <v-col class="pa-0" cols="12" md="9" sm="8">
+                                                    <v-col class="pa-0" cols="12" md="9" sm="6">
                                                         {{toNullable(courseStore.getById(toNullable(nextClass).course_by_teacher_id)).name}}
+                                                    </v-col>
+                                                    <v-col class="pa-0" cols="12" md="9" sm="2">
+                                                        在 {{toNullable(nextClass).place}}
                                                     </v-col>
                                                 </template>
                                                 <v-col class="pa-0" cols="12" v-else>然而你下节课好像没课😊</v-col>
