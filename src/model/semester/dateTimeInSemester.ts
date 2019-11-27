@@ -1,10 +1,13 @@
 import {Semester} from '@/model/semester/semester';
-import {addDays, eachWeekOfInterval, getDay, isAfter, isSameDay, isWithinInterval} from 'date-fns';
-import {findFirst, findIndex} from 'fp-ts/lib/Array';
-import {getOrElse, map, Option} from 'fp-ts/lib/Option';
+import {addDays, eachWeekOfInterval, getDay, isAfter, isBefore, isSameDay, isWithinInterval} from 'date-fns';
+import {findFirst, findIndex, lookup} from 'fp-ts/lib/Array';
+import {chain, getOrElse, map, Option} from 'fp-ts/lib/Option';
 import {Holiday} from '@/model/semester/holiday/holiday';
 import {pipe} from 'fp-ts/lib/pipeable';
 import {partial} from '@/tools/partial';
+import {extractTime} from '@/tools/dateTime';
+import {SectorRepository, SectorService} from '@/model/sector';
+import {last} from 'fp-ts/lib/NonEmptyArray';
 
 export const HOLIDAY = 7;
 
@@ -78,5 +81,40 @@ export namespace DateTimeInSemesterService {
             map((it: number) => it + 1),
             getOrElse(() => 0)
         );
+    }
+
+    /**
+     * 判断某个时间点是否在第一节课之前
+     */
+    export function isBeforeFirstSector(dateTime: DateTimeInSemester): boolean {
+        return isBefore(extractTime(dateTime.dateTime), SectorRepository.sectors[0].start);
+    }
+
+    /**
+     * 判断某个时间点是否在最后一节课之后
+     */
+    export function isAfterLastSector(dateTime: DateTimeInSemester): boolean {
+        return isAfter(extractTime(dateTime.dateTime), last(SectorRepository.sectors).end);
+    }
+
+    /**
+     * 找出某一时间点的这一节课
+     */
+    export function currentSectorIndex(dateTime: DateTimeInSemester): Option<number> {
+        return SectorService.sectorIndexForTime(dateTime.dateTime);
+    }
+
+    export function currentSector(dateTime: DateTimeInSemester): Option<Interval> {
+        return pipe(
+            currentSectorIndex(dateTime),
+            chain((index) => lookup(index, SectorRepository.sectors))
+        );
+    }
+
+    /**
+     * 找出现在正在进行的课间休息时间
+     */
+    export function currentRest(dateTime: DateTimeInSemester): Option<Interval> {
+        return findFirst((it: Interval) => isWithinInterval(extractTime(dateTime.dateTime), it))(SectorRepository.rests);
     }
 }

@@ -8,7 +8,7 @@
                     </v-avatar>
                 </v-col>
                 <v-divider class="mx-1" inset vertical></v-divider>
-                <v-col class="d-flex align-center pa-0" cols="8">
+                <v-col class="d-flex align-center pa-0" cols="9" sm="10">
                     <v-row>
                         <v-col class="pb-0 pt-0" cols="12" md="6">
                             今天是{{format(dateTimeStore.now, "yyyy年MM月dd日 E", {locale: zhCN})}}

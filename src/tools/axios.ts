@@ -2,7 +2,9 @@ import Axios from 'axios';
 import {jsonStringToObject} from 'json-interface2class';
 
 const instance = Axios.create({
-    baseURL: 'http://cloud.shuosc.org:30000/',
+    baseURL: process.env.NODE_ENV === 'development' ?
+        'http://cloud.shu.xn--io0a7i:30000/' :
+        '/',
 });
 
 const dateRegex = /((\d{4})|([+-]?\d{6}))-(\d{2})-(\d{2})T\d{2}:\d{2}:\d{2}(\.\d{3})?Z/;
@@ -30,6 +32,9 @@ instance.interceptors.request.use((request) => {
 );
 
 instance.interceptors.response.use((response) => {
+    if (typeof response.config.url === 'string' && response.config.url.includes('login')) {
+        Requesting.clear();
+    }
     response.data = jsonStringToObject(response.data, config);
     return response;
 });

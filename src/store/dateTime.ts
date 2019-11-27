@@ -1,7 +1,7 @@
 import {Module, Mutation, VuexModule} from 'vuex-module-decorators';
 import {map, Option} from 'fp-ts/lib/Option';
 import {pipe} from 'fp-ts/lib/pipeable';
-import {addHours} from 'date-fns';
+import {addMinutes} from 'date-fns';
 import {DateTimeInSemester} from '@/model/semester/dateTimeInSemester';
 import {Semester} from '@/model/semester/semester';
 
@@ -32,8 +32,8 @@ export default class DateTimeModule extends VuexModule {
         if (this.intervalId === 0) {
             if (process.env.NODE_ENV === 'development') {
                 this.intervalId = setInterval(() => {
-                    this.nowBuffer = addHours(this.nowBuffer, 1);
-                }, 1000);
+                    this.nowBuffer = addMinutes(this.nowBuffer, 1);
+                }, 500);
             } else {
                 this.intervalId = setInterval(() => {
                     this.nowBuffer = new Date();

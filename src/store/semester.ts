@@ -3,13 +3,14 @@ import Axios from '@/tools/axios';
 import {fromNullable, isSome, map, none, Option, some} from 'fp-ts/lib/Option';
 import {format, isWithinInterval} from 'date-fns';
 import {Semester} from '@/model/semester/semester';
+import {findFirst} from 'fp-ts/lib/Array';
 
 @Module({name: 'semester', namespaced: true})
 export default class SemesterModule extends VuexModule {
-    private semesters: Map<string, Semester> = new Map<string, Semester>();
+    private semesters: Array<Semester> = [];
 
     get getById(): (id: string) => Option<Semester> {
-        return (id: string) => fromNullable(this.semesters.get(id));
+        return (id: string) => findFirst((it: Semester) => it.id === id)(this.semesters);
     }
 
     get getByDateTime(): (dateTime: Date) => Option<Semester> {
@@ -21,7 +22,7 @@ export default class SemesterModule extends VuexModule {
 
     @Mutation
     public addSemester(semester: Option<Semester>) {
-        map((it: Semester) => this.semesters.set(it.id, it))(semester);
+        map((it: Semester) => this.semesters.push(it))(semester);
     }
 
     @Action({commit: 'addSemester'})
