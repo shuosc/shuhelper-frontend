@@ -3,6 +3,7 @@ import {DateTimeInSemester, DateTimeInSemesterService, HOLIDAY} from '@/model/se
 import {fromNullable, Option} from 'fp-ts/lib/Option';
 import Axios from '../tools/axios';
 import {nextBeautifulLightColor} from '@/tools/color';
+import {extractDate} from '@/tools/dateTime';
 
 export interface Class {
     weeks: Array<number>,
@@ -29,6 +30,7 @@ export interface Course {
 @Module({name: 'course', namespaced: true})
 export default class CourseModule extends VuexModule {
     public courses: Array<Course> = [];
+    private classesForDate = new Map<Date, Array<Class>>();
 
     get getById(): (id: string) => Option<Course> {
         return (id: string) => fromNullable(this.courses.find((it) => it.id === id));
@@ -36,18 +38,28 @@ export default class CourseModule extends VuexModule {
 
     get getClassesByDateTimeInSemester(): (dateTimeInSemester: DateTimeInSemester) => Array<Class> {
         return (dateTimeInSemester: DateTimeInSemester) => {
+            if (this.classesForDate.has(extractDate(dateTimeInSemester.dateTime))) {
+                return this.classesForDate.get(extractDate(dateTimeInSemester.dateTime)) as Array<Class>;
+            }
             const schoolDay = DateTimeInSemesterService.schoolDay(dateTimeInSemester);
             const weekIndex = DateTimeInSemesterService.getWorkWeekIndex(dateTimeInSemester);
             if (schoolDay === HOLIDAY) {
                 return [];
             }
-            const result = [];
-            for (const course of this.courses.values()) {
+            const result: Array<Class> = [];
+            // can't use filter here due to performance problem
+            for (const course of this.courses) {
                 if (course.on_semester_id === dateTimeInSemester.semester.id) {
-                    result.push(...course.classes.filter((it) => {
-                        return it.weeks.includes(weekIndex) && it.weekday === schoolDay;
-                    }));
+                    for (const classObject of course.classes) {
+                        if (classObject.weekday === schoolDay && classObject.weeks.includes(weekIndex)) {
+                            result.push(classObject);
+                        }
+                    }
                 }
+            }
+            result.sort((a, b) => a.begin_sector - b.end_sector);
+            if (result.length !== 0) {
+                this.classesForDate.set(extractDate(dateTimeInSemester.dateTime), result);
             }
             return result;
         };

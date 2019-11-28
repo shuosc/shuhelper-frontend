@@ -109,24 +109,24 @@
 </template>
 
 <script lang="ts">
-    import {Component, Vue} from "vue-property-decorator";
-    import {avatarSize} from "@/tools/avatarSize";
-    import {differenceInMinutes, format} from "date-fns";
-    import {getModule} from "vuex-module-decorators";
-    import UserModule from "@/store/user";
-    import {chain, getOrElse, isNone, isSome, map, option, Option, some, toNullable} from "fp-ts/lib/Option";
-    import DateTimeModule from "@/store/dateTime";
-    import {DateTimeInSemesterService} from "@/model/semester/dateTimeInSemester";
-    import {pipe} from "fp-ts/lib/pipeable";
-    import CourseModule, {Class} from "@/store/course";
-    import SemesterModule from "@/store/semester";
-    import {Semester} from "@/model/semester/semester";
-    import {sequenceT} from "fp-ts/lib/Apply";
-    import {ClassService} from "@/model/class";
-    import {findFirst} from "fp-ts/lib/Array";
-    import {extractTime} from "@/tools/dateTime";
-    import {SectorService} from "@/model/sector";
-    import {toPercent} from "@/tools/toPercent";
+    import {Component, Vue} from 'vue-property-decorator';
+    import {avatarSize} from '@/tools/avatarSize';
+    import {differenceInMinutes, format} from 'date-fns';
+    import {getModule} from 'vuex-module-decorators';
+    import UserModule from '@/store/user';
+    import {chain, getOrElse, isNone, isSome, map, option, Option, some, toNullable} from 'fp-ts/lib/Option';
+    import DateTimeModule from '@/store/dateTime';
+    import {DateTimeInSemesterService} from '@/model/semester/dateTimeInSemester';
+    import {pipe} from 'fp-ts/lib/pipeable';
+    import CourseModule, {Class} from '@/store/course';
+    import SemesterModule from '@/store/semester';
+    import {Semester} from '@/model/semester/semester';
+    import {sequenceT} from 'fp-ts/lib/Apply';
+    import {ClassService} from '@/model/class';
+    import {findFirst} from 'fp-ts/lib/Array';
+    import {extractTime} from '@/tools/dateTime';
+    import {SectorService} from '@/model/sector';
+    import {toPercent} from '@/tools/toPercent';
 
     @Component({
         methods: {
@@ -228,5 +228,9 @@
 </script>
 
 <style scoped>
-
+    @media screen and (min-width: 750px) {
+        .v-avatar i {
+            font-size: 30px;
+        }
+    }
 </style>

@@ -14,3 +14,7 @@ export function mergeDateTime(date: Date, time: Date) {
 export function extractTime(dateTime: Date): Date {
     return createTime(dateTime.getHours(), dateTime.getMinutes(), dateTime.getSeconds());
 }
+
+export function extractDate(dateTime: Date): Date {
+    return new Date(dateTime.getFullYear(), dateTime.getMonth(), dateTime.getDate());
+}

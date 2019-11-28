@@ -52,11 +52,11 @@
 </template>
 
 <script lang="ts">
-    import {Component, Vue} from "vue-property-decorator";
-    import UserModule from "@/store/user";
-    import {getModule} from "vuex-module-decorators";
-    import {getOrElse, isSome, map} from "fp-ts/lib/Option";
-    import {pipe} from "fp-ts/lib/pipeable";
+    import {Component, Vue} from 'vue-property-decorator';
+    import UserModule from '@/store/user';
+    import {getModule} from 'vuex-module-decorators';
+    import {getOrElse, isSome, map} from 'fp-ts/lib/Option';
+    import {pipe} from 'fp-ts/lib/pipeable';
 
     @Component({
         methods: {getOrElse, map, pipe, isSome}
@@ -64,20 +64,20 @@
     export default class Default extends Vue {
         private drawer = false;
         private miniVariant = false;
-        private title = "SHUHelper";
+        private title = 'SHUHelper';
         private userStore = getModule(UserModule, this.$store);
 
         private items = [
-            {icon: "school", title: "首页", to: "/"},
-            {icon: "calendar", title: "日程", to: "/school-calendar"}
+            {icon: 'school', title: '首页', to: '/'},
+            {icon: 'calendar', title: '课表', to: '/school-calendar'}
         ];
 
         private auth() {
             if (isSome(this.userStore.user)) {
-                localStorage.removeItem("token");
-                window.location.assign("/shuhelper/");
+                localStorage.removeItem('token');
+                window.location.assign('/shuhelper/');
             } else {
-                this.$router.push("/login");
+                this.$router.push('/login');
             }
         }
     };

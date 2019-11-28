@@ -48,16 +48,16 @@
 </template>
 
 <script lang="ts">
-    import {Component, Prop, Vue} from "vue-property-decorator";
-    import {getModule} from "vuex-module-decorators";
-    import DateTimeModule from "@/store/dateTime";
-    import {format, parse} from "date-fns";
-    import CourseModule, {Class} from "@/store/course";
-    import SemesterModule from "@/store/semester";
-    import {pipe} from "fp-ts/lib/pipeable";
-    import {Semester} from "@/model/semester/semester";
-    import {getOrElse, isSome, map, toNullable} from "fp-ts/lib/Option";
-    import {DateTimeInSemesterService} from "@/model/semester/dateTimeInSemester";
+    import {Component, Prop, Vue} from 'vue-property-decorator';
+    import {getModule} from 'vuex-module-decorators';
+    import DateTimeModule from '@/store/dateTime';
+    import {format, parse} from 'date-fns';
+    import CourseModule, {Class} from '@/store/course';
+    import SemesterModule from '@/store/semester';
+    import {pipe} from 'fp-ts/lib/pipeable';
+    import {Semester} from '@/model/semester/semester';
+    import {getOrElse, isSome, map, toNullable} from 'fp-ts/lib/Option';
+    import {DateTimeInSemesterService} from '@/model/semester/dateTimeInSemester';
 
     @Component({
         methods: {format, parse, toNullable, pipe, map, getOrElse, isSome}
@@ -65,18 +65,18 @@
     export default class Calendar extends Vue {
         @Prop() public value!: Date;
         private dateTimeStore = getModule(DateTimeModule, this.$store);
-        private stringValue = format(new Date(), "yyyy-MM-dd");
+        private stringValue = format(new Date(), 'yyyy-MM-dd');
         private courseStore = getModule(CourseModule, this.$store);
         private semesterStore = getModule(SemesterModule, this.$store);
         private DateTimeInSemesterService = DateTimeInSemesterService;
 
         public clicked(day: { date: string }) {
             this.stringValue = day.date;
-            this.$emit("update:value", parse(this.stringValue, "yyyy-MM-dd", this.dateTimeStore.now));
+            this.$emit('update:value', parse(this.stringValue, 'yyyy-MM-dd', this.dateTimeStore.now));
         }
 
         public getClasses(dateString: string): Array<Class> {
-            const dateTime = parse(dateString, "yyyy-MM-dd", this.dateTimeStore.now);
+            const dateTime = parse(dateString, 'yyyy-MM-dd', this.dateTimeStore.now);
             return pipe(
                 this.semesterStore.getByDateTime(dateTime),
                 map((semester: Semester) => this.courseStore.getClassesByDateTimeInSemester({semester, dateTime})),

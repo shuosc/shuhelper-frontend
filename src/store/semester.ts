@@ -8,16 +8,24 @@ import {findFirst} from 'fp-ts/lib/Array';
 @Module({name: 'semester', namespaced: true})
 export default class SemesterModule extends VuexModule {
     private semesters: Array<Semester> = [];
+    // for performance
+    private dateTimeToSemesterIndex = new Map<Date, Semester>();
 
     get getById(): (id: string) => Option<Semester> {
         return (id: string) => findFirst((it: Semester) => it.id === id)(this.semesters);
     }
 
     get getByDateTime(): (dateTime: Date) => Option<Semester> {
-        return (dateTime: Date) =>
-            fromNullable(Array.from(this.semesters.values()).find((semester: Semester) => {
+        return (dateTime: Date) => {
+            if (this.dateTimeToSemesterIndex.has(dateTime)) {
+                return some(this.dateTimeToSemesterIndex.get(dateTime) as Semester);
+            }
+            const result = fromNullable(this.semesters.find((semester: Semester) => {
                 return isWithinInterval(dateTime, semester);
             }));
+            map((semester: Semester) => this.dateTimeToSemesterIndex.set(dateTime, semester))(result);
+            return result;
+        };
     }
 
     @Mutation
