@@ -4,6 +4,7 @@ import SemesterModule from '@/store/semester';
 import DateTimeModule from '@/store/dateTime';
 import UserModule from '@/store/user';
 import CourseModule from '@/store/course';
+import SettingsModule from '@/store/settings';
 
 Vue.use(Vuex);
 
@@ -12,7 +13,8 @@ const store = new Vuex.Store({
         user: UserModule,
         course: CourseModule,
         semester: SemesterModule,
-        dateTime: DateTimeModule
+        dateTime: DateTimeModule,
+        settings: SettingsModule
     },
 });
 

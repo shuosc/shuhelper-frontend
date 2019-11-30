@@ -17,6 +17,10 @@ const routes = [
         name: 'login',
         meta: {layout: 'middleBox'},
         component: () => import('../views/Login.vue'),
+    }, {
+        path: '/settings',
+        name: 'settings',
+        component: () => import('../views/Settings.vue'),
     },
 ];
 

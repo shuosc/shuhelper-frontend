@@ -26,7 +26,7 @@
                                 </v-col>
                                 <v-col class="pa-0" cols="12" v-else-if="this.pipe(
                                     dateTimeStore.currentDateTimeInSemester,
-                                    this.chain(DateTimeInSemesterService.schoolDay),
+                                    this.map(DateTimeInSemesterService.schoolDay),
                                     this.map((it) => it === 0 || it === 6),
                                     this.getOrElse(() => false))">
                                     今天周末！

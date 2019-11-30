@@ -57,6 +57,7 @@
     import {getModule} from 'vuex-module-decorators';
     import {getOrElse, isSome, map} from 'fp-ts/lib/Option';
     import {pipe} from 'fp-ts/lib/pipeable';
+    import SettingsModule, {Settings} from '@/store/settings';
 
     @Component({
         methods: {getOrElse, map, pipe, isSome}
@@ -69,8 +70,18 @@
 
         private items = [
             {icon: 'school', title: '首页', to: '/'},
-            {icon: 'calendar', title: '课表', to: '/school-calendar'}
+            {icon: 'calendar', title: '课表', to: '/school-calendar'},
+            {icon: 'file-document-box-multiple-outline', title: '待办事项', to: '/todo'},
+            {icon: 'settings', title: '设置', to: '/settings'}
         ];
+
+        public mounted() {
+            const settingsStore = getModule(SettingsModule, this.$store);
+            (this as any).$vuetify.theme.dark = settingsStore.settings.mode === 'dark';
+            this.$store.watch((state) => state.settings.settings, (newSettings: Settings) => {
+                (this as any).$vuetify.theme.dark = newSettings.mode === 'dark';
+            });
+        }
 
         private auth() {
             if (isSome(this.userStore.user)) {

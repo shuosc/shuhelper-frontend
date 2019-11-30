@@ -5,7 +5,8 @@
                          @click=""
                          v-for="classObject in classes">
                 <v-list-item-avatar>
-                    <v-icon :style="{background: toNullable(courseStore.getById(classObject.course_by_teacher_id)).color}">
+                    <v-icon :style="{background: toNullable(courseStore.getById(classObject.course_by_teacher_id)).color}"
+                            class="class-avatar">
                         mdi-book-multiple
                     </v-icon>
                 </v-list-item-avatar>
@@ -89,5 +90,9 @@
         color: #9d9d9d;
         border: solid 1px #9d9d9d;
         border-radius: 50%;
+    }
+
+    .theme--light .class-avatar {
+        color: white;
     }
 </style>
