@@ -71,7 +71,7 @@
         private items = [
             {icon: 'school', title: '首页', to: '/'},
             {icon: 'calendar', title: '课表', to: '/school-calendar'},
-            {icon: 'file-document-box-multiple-outline', title: '待办事项', to: '/todo'},
+            // {icon: 'file-document-box-multiple-outline', title: '待办事项', to: '/todo'},
             {icon: 'settings', title: '设置', to: '/settings'}
         ];
 

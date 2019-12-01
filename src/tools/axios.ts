@@ -3,7 +3,7 @@ import {jsonStringToObject} from 'json-interface2class';
 
 const instance = Axios.create({
     baseURL: process.env.NODE_ENV === 'development' ?
-        'http://cloud.shu.xn--io0a7i:30000/' :
+        'https://cloud.shuosc.com/' :
         '/',
 });
 
@@ -15,7 +15,7 @@ config.set(dateRegex.test.bind(dateRegex), (str: string) => new Date(str));
 const Requesting = new Set<string>();
 
 instance.interceptors.request.use((request) => {
-        if (typeof request.url === 'string') {
+        if (typeof request.url === 'string' && request.method === 'get') {
             if (request.url === 'api/semester?date=now' && !Requesting.has(request.url)) {
                 setTimeout(() => Requesting.delete(request.url as string), 1000);
                 Requesting.add(request.url);

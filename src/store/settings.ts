@@ -10,7 +10,8 @@ export interface Settings {
 }
 
 async function upload(settings: Settings) {
-    if (settings.saveTodoIn === 'server') {
+    if (settings.saveSettingsIn === 'server') {
+        localStorage.removeItem('settings');
         return await Axios.post('api/shuhelper-config-storage', settings);
     } else {
         localStorage.setItem('settings', JSON.stringify(settings));
