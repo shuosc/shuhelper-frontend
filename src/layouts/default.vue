@@ -41,7 +41,7 @@
             </v-list>
         </v-navigation-drawer>
         <v-content>
-            <v-container fluid>
+            <v-container class="pa-0 ma-0 fill-width">
                 <slot></slot>
             </v-container>
         </v-content>
@@ -70,8 +70,8 @@
 
         private items = [
             {icon: 'school', title: '首页', to: '/'},
-            {icon: 'calendar', title: '课表', to: '/school-calendar'},
-            // {icon: 'file-document-box-multiple-outline', title: '待办事项', to: '/todo'},
+            {icon: 'calendar', title: '校历', to: '/school-calendar'},
+            {icon: 'file-document-box-multiple-outline', title: '待办事项', to: '/todo'},
             {icon: 'settings', title: '设置', to: '/settings'}
         ];
 
@@ -95,6 +95,10 @@
 </script>
 
 <style>
+    .fill-width {
+        max-width: 100vw !important;
+    }
+
     .auth-button {
         text-align: right;
     }

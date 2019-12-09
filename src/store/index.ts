@@ -5,6 +5,7 @@ import DateTimeModule from '@/store/dateTime';
 import UserModule from '@/store/user';
 import CourseModule from '@/store/course';
 import SettingsModule from '@/store/settings';
+import TodoModule from '@/store/todo';
 
 Vue.use(Vuex);
 
@@ -14,7 +15,8 @@ const store = new Vuex.Store({
         course: CourseModule,
         semester: SemesterModule,
         dateTime: DateTimeModule,
-        settings: SettingsModule
+        settings: SettingsModule,
+        todo: TodoModule
     },
 });
 

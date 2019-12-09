@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="pa-4">
         <DateInfo class="mb-1"></DateInfo>
         <TimeInfo></TimeInfo>
     </div>

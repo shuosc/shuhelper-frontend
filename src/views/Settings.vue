@@ -9,6 +9,13 @@
         </v-list-item>
         <v-list-item>
             <v-list-item-content class="pl-3">
+                <v-switch :label="'Todo项储存在'+' '+(settingsStore.settings.saveTodoIn === 'client'?'客户端':'服务器')"
+                          v-model="saveTodoIn">
+                </v-switch>
+            </v-list-item-content>
+        </v-list-item>
+        <v-list-item>
+            <v-list-item-content class="pl-3">
                 <v-switch :label="settingsStore.settings.mode === 'light'?'明亮模式':'黑暗模式'"
                           v-model="mode"
                 ></v-switch>
@@ -41,6 +48,14 @@
 
         set saveSettingsIn(value: boolean) {
             this.settingsStore.setSaveSettingsIn(value ? 'client' : 'server');
+        }
+
+        get saveTodoIn() {
+            return this.settingsStore.settings.saveTodoIn === 'client';
+        }
+
+        set saveTodoIn(value: boolean) {
+            this.settingsStore.setSaveTodoIn(value ? 'client' : 'server');
         }
     };
 </script>

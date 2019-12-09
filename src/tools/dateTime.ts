@@ -1,3 +1,6 @@
+import {_, partial} from '@/tools/partial';
+import {jsonStringToObject} from 'json-interface2class';
+
 export function createTime(hours: number, minutes: number, seconds = 0): Date {
     return new Date(0, 0, 0, hours, minutes, seconds);
 }
@@ -18,3 +21,9 @@ export function extractTime(dateTime: Date): Date {
 export function extractDate(dateTime: Date): Date {
     return new Date(dateTime.getFullYear(), dateTime.getMonth(), dateTime.getDate());
 }
+
+export const dateRegex = /((\d{4})|([+-]?\d{6}))-(\d{2})-(\d{2})T\d{2}:\d{2}:\d{2}((\.\d{3})?Z)|(\+\d{2}:\d{2})/;
+const config = new Map<(obj: any) => boolean, (obj: any) => any>();
+config.set(dateRegex.test.bind(dateRegex), (str: string) => new Date(str));
+
+export const parseDateTimeInJSON = partial(jsonStringToObject, _, config);

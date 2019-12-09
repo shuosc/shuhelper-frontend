@@ -60,7 +60,7 @@ export default class SettingsModule extends VuexModule {
 
     @Action
     public async setSaveTodoIn(mode: 'server' | 'client') {
-        this.context.commit('setSaveSettingsInMutation', mode);
+        this.context.commit('setSaveTodoInMutation', mode);
         await upload(this.settings);
     }
 

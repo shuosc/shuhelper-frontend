@@ -21,6 +21,10 @@ const routes = [
         path: '/settings',
         name: 'settings',
         component: () => import('../views/Settings.vue'),
+    }, {
+        path: '/todo',
+        name: 'tod',
+        component: () => import('../views/Todo.vue'),
     },
 ];
 
