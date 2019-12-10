@@ -9,7 +9,7 @@ jobs:
       - name: Build the Docker image
         run: |
           docker build . -t shuhelper-frontend
-          docker tag shuhelper-frontend ${{ secrets.DOCKER_USERNAME }}/shuhelper-frontend:${GITHUB_SHA}
+          docker tag shuhelper-frontend ${{ secrets.DOCKER_USERNAME }}/shuhelper-frontend:${{ github.sha }}
           echo "${{ secrets.DOCKER_PASSWORD }}" | docker login --username "${{ secrets.DOCKER_USERNAME }}" --password-stdin
           docker push ${{ secrets.DOCKER_USERNAME }}/shuhelper-frontend
       - name: Deploy to server
@@ -20,4 +20,4 @@ jobs:
           password: ${{ secrets.CD_PASSWORD }}
           port: 22
           script: |
-            /root/deploy.sh shuhelper-frontend ${{ secrets.DOCKER_USERNAME }}/shuhelper-frontend:${GITHUB_SHA}
+            /root/deploy.sh shuhelper-frontend ${{ secrets.DOCKER_USERNAME }}/shuhelper-frontend:${{ github.sha }}
