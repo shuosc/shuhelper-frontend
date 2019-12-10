@@ -21,7 +21,7 @@ export namespace SectorRepository {
                 createTime(16, 55),
                 createTime(18, 0),
                 createTime(18, 55),
-                createTime(19, 40),
+                createTime(19, 50),
             ]),
             toNullable,
             (it) => it as NonEmptyArray<Date>,

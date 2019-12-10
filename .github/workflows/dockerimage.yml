@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Docker Image CI/CD
 on: [push]
 
 jobs:
@@ -12,3 +12,12 @@ jobs:
           docker tag shuhelper-frontend ${{ secrets.DOCKER_USERNAME }}/shuhelper-frontend:${GITHUB_SHA}
           echo "${{ secrets.DOCKER_PASSWORD }}" | docker login --username "${{ secrets.DOCKER_USERNAME }}" --password-stdin
           docker push ${{ secrets.DOCKER_USERNAME }}/shuhelper-frontend
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: cloud.shu.xn--io0a7i
+          username: root
+          key: ${{ secrets.KEY }}
+          port: 22
+          script: |
+            /root/deploy.sh shuhelper-frontend ${{ secrets.DOCKER_USERNAME }}/shuhelper-frontend:${GITHUB_SHA}
