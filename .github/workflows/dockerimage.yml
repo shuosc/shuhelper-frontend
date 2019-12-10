@@ -17,7 +17,7 @@ jobs:
         with:
           host: cloud.shu.xn--io0a7i
           username: root
-          key: ${{ secrets.KEY }}
+          password: ${{ secrets.CD_PASSWORD }}
           port: 22
           script: |
             /root/deploy.sh shuhelper-frontend ${{ secrets.DOCKER_USERNAME }}/shuhelper-frontend:${GITHUB_SHA}
