@@ -1,152 +1,124 @@
 <template>
     <div>
-        <div class="d-flex justify-space-between pa-1">
-            <v-btn @click="$refs.calendar.prev()" fab small>
+        <div class="d-flex justify-space-between pa-1 mt-1">
+            <v-btn @click="prev" fab small>
                 <v-icon>mdi-chevron-left</v-icon>
             </v-btn>
-            <p class="ma-auto">{{format(parse(stringValue, 'yyyy-MM-dd', new Date()), 'yyyy 年 MM 月')}}</p>
-            <v-btn @click="$refs.calendar.next()" fab small>
+            <p class="ma-auto">{{format(displaying, 'yyyy 年 MM 月')}}</p>
+            <v-btn @click="next" fab small>
                 <v-icon>mdi-chevron-right</v-icon>
             </v-btn>
         </div>
-        <v-calendar
-                :day-format="(date) => date.day"
-                :month-format="()=>''"
-                :now="format(dateTimeStore.now, 'yyyy-MM-dd')"
-                @click:date="clicked"
-                class="school-calendar"
-                ref="calendar"
-                type="month"
-                v-model="stringValue">
-            <template v-slot:day-label="date">
-                <div :class="{selected:date.date === format(value, 'yyyy-MM-dd'),
-                                today: date.date === format(dateTimeStore.now,'yyyy-MM-dd')}"
-                     @click="clicked(date)">
-                    <div class="date"><span>{{date.day}}</span></div>
-                    <div class="d-flex justify-center mb-1" v-if="
-                    !pipe(semesterStore.getByDateTime(parse(date.date, 'yyyy-MM-dd', dateTimeStore.now)),
-                        map(semester => {
-                            return DateTimeInSemesterService.isHoliday({
-                                dateTime: parse(date.date, 'yyyy-MM-dd', dateTimeStore.now),
-                                semester: semester
-                            });
-                        }),
-                        getOrElse(() => true)
-                    )">
-                    <span :style="{background:toNullable(courseStore.getById(classObject.course_by_teacher_id)).color}"
-                          class="dot" v-for="classObject in getClasses(date.date)">
-                    </span>
-                    </div>
-                    <div class="holiday-text"
-                         v-else-if="isSome(semesterStore.getByDateTime(parse(date.date, 'yyyy-MM-dd', dateTimeStore.now)))">
-                        放假
-                    </div>
+        <div class="d-flex">
+            <v-row class="pl-3 pr-3">
+                <div class="calendar-daynames">
+                    <v-row class="pl-3 pr-3">
+                        <div class="calendar-dayname d-flex justify-center"
+                             v-for="chineseWeekdayName in chineseWeekdayNames">
+                            <span>{{chineseWeekdayName}}</span>
+                        </div>
+                    </v-row>
                 </div>
-            </template>
-        </v-calendar>
+                <div class="calendar-day-container d-flex pa-1" v-for="day in daysDisplaying">
+                    <Day :class="{notSameMonth: !isSameMonth(day,displaying), selected: isSameDay(day, value)}"
+                         :date="day"
+                         :key="day.toString()"
+                         @click="updateValue(day)"
+                         class="d-flex fill-height"
+                    ></Day>
+                </div>
+            </v-row>
+        </div>
     </div>
 </template>
 
 <script lang="ts">
-    import {Component, Prop, Vue} from 'vue-property-decorator';
-    import {getModule} from 'vuex-module-decorators';
-    import DateTimeModule from '@/store/dateTime';
-    import {format, parse} from 'date-fns';
-    import CourseModule, {Class} from '@/store/course';
-    import SemesterModule from '@/store/semester';
-    import {pipe} from 'fp-ts/lib/pipeable';
-    import {Semester} from '@/model/semester/semester';
-    import {getOrElse, isSome, map, toNullable} from 'fp-ts/lib/Option';
-    import {DateTimeInSemesterService} from '@/model/semester/dateTimeInSemester';
+    import {Component, Prop, Vue, Watch} from 'vue-property-decorator';
+    import Day from '@/components/schoolCalendar/Day.vue';
+    import {
+        addMonths,
+        eachDayOfInterval,
+        endOfMonth,
+        endOfWeek,
+        format,
+        isSameDay,
+        isSameMonth,
+        startOfMonth,
+        startOfWeek
+    } from 'date-fns';
 
     @Component({
-        methods: {format, parse, toNullable, pipe, map, getOrElse, isSome}
+        components: {Day},
+        methods: {format, isSameMonth, isSameDay}
     })
     export default class Calendar extends Vue {
         @Prop() public value!: Date;
-        private dateTimeStore = getModule(DateTimeModule, this.$store);
-        private stringValue = format(new Date(), 'yyyy-MM-dd');
-        private courseStore = getModule(CourseModule, this.$store);
-        private semesterStore = getModule(SemesterModule, this.$store);
-        private DateTimeInSemesterService = DateTimeInSemesterService;
+        private displaying: Date = this.value;
+        private chineseWeekdayNames = ['日', '一', '二', '三', '四', '五', '六'];
 
-        public clicked(day: { date: string }) {
-            this.stringValue = day.date;
-            this.$emit('update:value', parse(this.stringValue, 'yyyy-MM-dd', this.dateTimeStore.now));
+        get daysDisplaying() {
+            const start = startOfWeek(startOfMonth(this.displaying));
+            const end = endOfWeek(endOfMonth(this.displaying));
+            return eachDayOfInterval({start, end});
         }
 
-        public getClasses(dateString: string): Array<Class> {
-            const dateTime = parse(dateString, 'yyyy-MM-dd', this.dateTimeStore.now);
-            return pipe(
-                this.semesterStore.getByDateTime(dateTime),
-                map((semester: Semester) => this.courseStore.getClassesByDateTimeInSemester({semester, dateTime})),
-                getOrElse(() => [] as Array<Class>)
-            );
+        public mounted() {
+            (window as any).addMonths = addMonths;
+        }
+
+        public prev() {
+            this.displaying = addMonths(this.displaying, -1);
+        }
+
+        public next() {
+            this.displaying = addMonths(this.displaying, 1);
+        }
+
+        public updateValue(day: Date) {
+            this.$emit('update', day);
+        }
+
+        @Watch('value')
+        public onValueChanged(toValue: Date) {
+            if (!isSameDay(this.displaying, toValue)) {
+                this.displaying = toValue;
+            }
         }
     };
 </script>
 
 <style lang="stylus" scoped>
-    .dot {
-        display: inline-block;
-        min-width: 5px;
-        min-height: 5px;
-        border-radius: 5px;
-        margin-left: 1px;
-        margin-right: 1px;
+    grid-width = 14.28%;
+
+    .calendar-day-container {
+        flex: 0 0 grid-width;
+        cursor: pointer;
+    }
+
+    .notSameMonth {
+        opacity: 20%;
     }
 
     .selected {
-        border: solid 1px #9e9e9e;
-        border-radius: 3px;
+        border: solid 1px #acacac;
     }
 
-    .holiday-text {
-        font-size: 10px;
+    .calendar-day {
+        width: 100%;
     }
 
-    .today span {
-        color: #00b0ff;
+    .calendar-daynames {
+        width: 100%;
+        border-top: solid 1px #a1a1a1;
+        border-bottom: solid 1px #a1a1a1;
     }
-</style>
-<!--not scoped-->
-<style lang="stylus">
-    .school-calendar.v-calendar-weekly {
-        .v-calendar-weekly__head-weekday {
-            border: none;
-        }
 
-        .v-calendar-weekly__day {
-            border: none !important;
-            border-radius: 3px;
-            margin: 2px;
+    .calendar-dayname {
+        flex: 0 0 grid-width;
+        font-size: 14px;
 
-            &.v-present {
-                & .v-btn {
-                    color: #88b3ff;
-                    background: inherit;
-
-                    &:before {
-                        display: block;
-                        opacity: 0.08;
-                    }
-                }
-            }
-
-            & .v-btn {
-                margin-bottom: 2px;
-                height: 30px;
-                width: 30px;
-            }
-        }
-
-        .v-calendar-weekly__day.v-outside {
-            background: transparent !important;
-            opacity: 0.1;
-        }
-
-        .v-calendar-weekly__week {
-            height: unset;
+        &:not(:last-of-type) {
+            border-right: solid 1px #a1a1a1;
         }
     }
 </style>
