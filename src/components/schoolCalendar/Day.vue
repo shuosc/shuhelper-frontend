@@ -41,7 +41,7 @@
             return pipe(
                 semester,
                 map((semesterObject) => ({
-                    semesterObject,
+                    semester: semesterObject,
                     dateTime: this.date
                 })),
             );
@@ -60,7 +60,7 @@
                 this.dateTimeInSemester,
                 map((dateTimeInSemester) => {
                     return this.courseStore.getClassesByDateTimeInSemester(dateTimeInSemester)
-                        .sort((a, b) => a.begin_sector - b.end_sector);
+                        .sort((a: Class, b: Class) => a.begin_sector - b.end_sector);
                 }),
                 getOrElse(() => [] as Array<Class>)
             );
