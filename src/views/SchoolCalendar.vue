@@ -1,21 +1,21 @@
 <template>
     <v-card class="calendar-container">
-        <Calendar :value="this.date" @update:value="update"></Calendar>
+        <Calendar :value="this.date" @update="update"></Calendar>
         <CourseTable :value="this.date"></CourseTable>
     </v-card>
 </template>
 
 <script lang="ts">
-    import {Component, Vue} from "vue-property-decorator";
-    import Calendar from "@/components/schoolCalendar/calendar.vue";
-    import {getModule} from "vuex-module-decorators";
-    import SemesterModule from "@/store/semester";
-    import CourseModule from "@/store/course";
-    import {Semester} from "@/model/semester/semester";
-    import {isSome, map, toNullable} from "fp-ts/lib/Option";
-    import {eachDayOfInterval, endOfMonth, startOfMonth} from "date-fns";
-    import CourseTable from "@/components/schoolCalendar/courseTable.vue";
-    import DateTimeModule from "@/store/dateTime";
+    import {Component, Vue} from 'vue-property-decorator';
+    import Calendar from '@/components/schoolCalendar/calendar.vue';
+    import {getModule} from 'vuex-module-decorators';
+    import SemesterModule from '@/store/semester';
+    import CourseModule from '@/store/course';
+    import {Semester} from '@/model/semester/semester';
+    import {isSome, map, toNullable} from 'fp-ts/lib/Option';
+    import {eachDayOfInterval, endOfMonth, startOfMonth} from 'date-fns';
+    import CourseTable from '@/components/schoolCalendar/courseTable.vue';
+    import DateTimeModule from '@/store/dateTime';
 
     @Component({
         components: {CourseTable, Calendar}
