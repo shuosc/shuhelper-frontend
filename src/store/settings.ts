@@ -20,11 +20,7 @@ async function upload(settings: Settings) {
 
 @Module({name: 'settings', namespaced: true})
 export default class SettingsModule extends VuexModule {
-    public settings: Settings = {
-        mode: 'dark',
-        saveSettingsIn: 'server',
-        saveTodoIn: 'client'
-    };
+    public settings: Settings | null = null;
 
     @Mutation
     public setAll(settings: Settings) {
@@ -33,39 +29,72 @@ export default class SettingsModule extends VuexModule {
 
     @Mutation
     public setModeMutation(mode: 'dark' | 'light') {
-        this.settings.mode = mode;
+        if (this.settings === null) {
+            this.settings = {
+                mode: 'dark',
+                saveSettingsIn: 'server',
+                saveTodoIn: 'client'
+            };
+        }
+        this.settings!.mode = mode;
     }
 
     @Mutation
     public setSaveSettingsInMutation(mode: 'server' | 'client') {
-        this.settings.saveSettingsIn = mode;
+        if (this.settings === null) {
+            this.settings = {
+                mode: 'dark',
+                saveSettingsIn: 'server',
+                saveTodoIn: 'client'
+            };
+        }
+        this.settings!.saveSettingsIn = mode;
     }
 
     @Mutation
     public setSaveTodoInMutation(mode: 'server' | 'client') {
-        this.settings.saveTodoIn = mode;
+        if (this.settings === null) {
+            this.settings = {
+                mode: 'dark',
+                saveSettingsIn: 'server',
+                saveTodoIn: 'client'
+            };
+        }
+        this.settings!.saveTodoIn = mode;
     }
 
     @Action
     public async setMode(mode: 'dark' | 'light') {
         this.context.commit('setModeMutation', mode);
-        await upload(this.settings);
+        await upload(this.settings!);
     }
 
     @Action
     public async setSaveSettingsIn(mode: 'server' | 'client') {
         this.context.commit('setSaveSettingsInMutation', mode);
-        await upload(this.settings);
+        await upload(this.settings!);
     }
 
     @Action
     public async setSaveTodoIn(mode: 'server' | 'client') {
         this.context.commit('setSaveTodoInMutation', mode);
-        await upload(this.settings);
+        await upload(this.settings!);
     }
 
     @Action
     public async init() {
+        const fetch = async () => {
+            const result = await new Promise((resolve) => {
+                Axios.get('api/shuhelper-config-storage')
+                    .then((response) => resolve({
+                        mode: response.data.mode,
+                        saveSettingsIn: 'server',
+                        saveTodoIn: response.data.saveTodoIn
+                    }))
+                    .catch(() => resolve(null));
+            });
+            this.context.commit('setAll', result);
+        };
         if (localStorage.getItem('settings') !== undefined) {
             const inLocalStorage =
                 pipe(
@@ -77,21 +106,10 @@ export default class SettingsModule extends VuexModule {
                 getOrElse(() => false))) {
                 this.context.commit('setAll', toNullable(inLocalStorage));
             } else {
-                await Axios.get('api/shuhelper-config-storage')
-                    .then((response) => {
-                        this.context.commit('setAll', {
-                            mode: response.data.mode,
-                            saveSettingsIn: 'server',
-                            saveTodoIn: response.data.saveTodoIn
-                        });
-                    }).catch(() => {
-                        this.context.commit('setAll', {
-                            mode: 'dark',
-                            saveSettingsIn: 'client',
-                            saveTodoIn: 'client'
-                        });
-                    });
+                await fetch();
             }
+        } else {
+            await fetch();
         }
     }
 }

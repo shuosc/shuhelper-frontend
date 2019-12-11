@@ -75,9 +75,13 @@
             {icon: 'settings', title: '设置', to: '/settings'}
         ];
 
-        public mounted() {
+        public async mounted() {
             const settingsStore = getModule(SettingsModule, this.$store);
-            (this as any).$vuetify.theme.dark = settingsStore.settings.mode === 'dark';
+            while (settingsStore.settings === null) {
+                await settingsStore.init();
+                await (new Promise((resolve) => setTimeout(resolve, 1000)));
+            }
+            (this as any).$vuetify.theme.dark = settingsStore.settings!.mode === 'dark';
             this.$store.watch((state) => state.settings.settings, (newSettings: Settings) => {
                 (this as any).$vuetify.theme.dark = newSettings.mode === 'dark';
             });

@@ -97,6 +97,9 @@ export default class TodoModule extends VuexModule {
             if (createdItem.estimate_cost !== undefined) {
                 createdItem.estimate_cost = (parseInt(createdItem.estimate_cost, 10) / 1000 / 1000 / 1000 / 60) + 'm';
             }
+            if (createdItem.type === undefined) {
+                createdItem.type = '';
+            }
             this.context.commit('addItemMutation', createdItem);
         }
     }
@@ -121,7 +124,7 @@ export default class TodoModule extends VuexModule {
             this.context.commit('deleteItemMutation', item);
             localStorage.setItem('todoItems', JSON.stringify(this.todoItems));
         } else {
-            await Axios.delete('api/todo?id=' + item.id);
+            await Axios.delete('api/todo', {params: {id: item.id}});
             this.context.commit('deleteItemMutation', item);
         }
     }
@@ -129,6 +132,10 @@ export default class TodoModule extends VuexModule {
     @Action
     public async init() {
         let itemsInStorage;
+        while (this.context.rootState.settings.settings === null) {
+            await this.context.dispatch('settings/init', null, {root: true});
+            await (new Promise((resolve) => setTimeout(resolve, 1000)));
+        }
         if (this.context.rootState.settings.settings.saveTodoIn === 'client') {
             itemsInStorage = pipe(
                 localStorage.getItem('todoItems'),
@@ -140,7 +147,12 @@ export default class TodoModule extends VuexModule {
         } else {
             itemsInStorage = (await new Promise((resolve, reject) => Axios.get('api/todo')
                 .then(resolve).catch(reject)) as { data: Array<Todo> }).data;
-            itemsInStorage.forEach((it: Todo) => it.estimate_cost = ((parseInt(it.estimate_cost!, 10)) / 1000 / 1000 / 1000 / 60).toString() + 'm');
+            itemsInStorage.forEach((it: Todo) => {
+                if (it.estimate_cost !== undefined) {
+                    it.estimate_cost = ((parseInt(it.estimate_cost!, 10)) / 1000 / 1000 / 1000 / 60).toString() + 'm';
+                }
+            });
+            itemsInStorage.forEach((it: Todo) => it.type = it.type === undefined ? '' : it.type);
             this.context.commit('setTodoItems', itemsInStorage);
         }
     }

@@ -3,7 +3,7 @@ import {parseDateTimeInJSON} from '@/tools/dateTime';
 
 const instance = Axios.create({
     baseURL: process.env.NODE_ENV === 'development' ?
-        'https://cloud.shuosc.com/' :
+        'http://dev.cloud.shuosc.com/' :
         '/',
 });
 

@@ -47,6 +47,7 @@
                                     label="估计时长"
                                     prepend-icon="mdi-timelapse"
                                     suffix="分钟"
+                                    type="number"
                                     v-model="estimateCost"></v-text-field>
                         </v-col>
                         <v-col cols="12" md="3" sm="6">
