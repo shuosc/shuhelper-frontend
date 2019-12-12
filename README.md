@@ -6,7 +6,7 @@
 
 ## 简介
 
-SHUhelper将是一个服务于**学生**的，符合**教师学校**需求的**安全**的开源信息服务平台。我们将尽力保护所有个人隐私，所有的学生个人信息认真全部会通过学校提供的登录接口来坚定权限。
+SHUhelper将是一个服务于**学生**的，符合**教师学校**需求的**安全**的开源信息服务平台。我们将尽力保护所有个人隐私，所有的学生个人信息认证全部通过学校提供的登录接口来鉴权。
 
 这个仓库是对于SHUhelper的项目的整体描述和前端的代码。
 
@@ -20,63 +20,52 @@ SHUhelper将是一个服务于**学生**的，符合**教师学校**需求的**�
 ## 目前实现的功能
 
 - 校历假期判断
-- 当前事件课程提醒
+- 当前时间课程提醒
 - 精确到天的课程表服务
 - 多种算法的个人作业/代码/报告/研讨代办事项管理
 - 白天，夜间模式
 
 ## 工作中的功能
 
-- 校历性能调优
 - 格式化的课程表
 - 空教室查询
 
 ## How to contribute
 
 1. 加SHU开源社区的QQ群（24061199）询问
-2. 前端：咨询@longfangsong
-3. 后端：咨询@longfangsong
-4. 运维：咨询@longfangsong / @zhoudian64
-5. 宣发：咨询@zhoudian64
+2. 前端：咨询 @longfangsong
+3. 后端：咨询 @longfangsong
+4. 运维：咨询 @longfangsong / @zhoudian64
+5. 宣发：咨询 @zhoudian64
 
 ## 技术栈
 
 ### 后端
-    go, 或者任何单一微服务使用的语言。
+
+后端语言不限，能以HTTP形式暴露出服务接口即可，Java除外，**绝对禁止**使用Java。
+
+目前大部分微服务为Go语言写成。
 
 ### 前端
-    vueJS, TypeScript
-    
+
+- 前端框架：[Vue.js](https://cn.vuejs.org)
+
+  同时使用了官方推荐的状态管理框架 [Vuex](https://vuex.vuejs.org)、官方推荐的Ajax请求库 [axios](https://github.com/axios/axios)。
+
+- UI框架：[Vuetify](https://vuetifyjs.com/zh-Hans/)
+
+- 主要语言：[TypeScript](https://www.typescriptlang.org)
+
+  同时还使用了 [vue-property-decorator](https://github.com/kaorun343/vue-property-decorator) 和 [vuex-module-decorators](https://championswimmer.in/vuex-module-decorators/pages/overview.html) 来让 Vue in ts 能写得更爽。
+
+- 其他一些用到的库有：
+
+  - [date-fns](https://date-fns.org)：用于处理日期时间
+  - [fp-ts](https://gcanti.github.io/fp-ts/)：主要使用其中的Option Monad
 ### 数据库
-    Redis, PostgreSQl
+- [PostgreSQL](https://www.postgresql.org)
+- [Redis](https://redis.io)
 
 ### 部署
-    k3s(lite k8s provided by Rancher), ubuntu 16.04 server, aliyun
 
-## Project setup
-```
-yarn install
-```
-
-### Compiles and hot-reloads for development
-```
-yarn run serve
-```
-
-### Compiles and minifies for production
-```
-yarn run build
-```
-
-### Run your tests
-```
-yarn run test
-```
-
-### Lints and fixes files
-```
-yarn run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+- [k3s](https://k3s.io)
