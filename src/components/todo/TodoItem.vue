@@ -131,7 +131,7 @@
         line-height: 1em;
         border-bottom-left-radius: 4px;
         border-bottom-right-radius: 4px;
-        opacity: 80%;
+        opacity: 0.8;
     }
 
     .estimation-cost {
@@ -141,6 +141,6 @@
         line-height: 1em;
         border-bottom-left-radius: 4px;
         border-bottom-right-radius: 4px;
-        opacity: 80%;
+        opacity: 0.8;
     }
 </style>
