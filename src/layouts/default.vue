@@ -55,7 +55,7 @@
     import {Component, Vue} from 'vue-property-decorator';
     import UserModule from '@/store/user';
     import {getModule} from 'vuex-module-decorators';
-    import {getOrElse, isSome, map} from 'fp-ts/lib/Option';
+    import {getOrElse, isSome, map, toNullable} from 'fp-ts/lib/Option';
     import {pipe} from 'fp-ts/lib/pipeable';
     import SettingsModule, {Settings} from '@/store/settings';
 
@@ -77,11 +77,8 @@
 
         public async mounted() {
             const settingsStore = getModule(SettingsModule, this.$store);
-            while (settingsStore.settings === null) {
-                await settingsStore.init();
-                await (new Promise((resolve) => setTimeout(resolve, 1000)));
-            }
-            (this as any).$vuetify.theme.dark = settingsStore.settings!.mode === 'dark';
+            await settingsStore.fetchUntilSuccess();
+            (this as any).$vuetify.theme.dark = toNullable(settingsStore.settings)!.mode === 'dark';
             this.$store.watch((state) => state.settings.settings, (newSettings: Settings) => {
                 (this as any).$vuetify.theme.dark = newSettings.mode === 'dark';
             });

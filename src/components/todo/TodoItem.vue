@@ -1,11 +1,11 @@
 <template>
-    <v-sheet :class="'todo-'+(item.type === '' ? 'unknown':item.type.toLowerCase())"
+    <v-sheet :class="'todo-'+((item.type === '' || item.type === undefined) ? 'unknown':item.type.toLowerCase())"
              @click="displayControl = !displayControl"
              class="pa-2 todo-item"
              tile>{{item.content}}
         <div class="top-right">
             <span class="due-date red darken-1 white--text" v-if="item.due !== undefined">
-                {{ isAfter(item.due, dateTimeStore.now) ? formatDistance(item.due, new Date(), {locale: zhCN}) : "已过期"}}
+                {{ isAfter(item.due, dateTimeStore.now) ? formatDistance(item.due, dateTimeStore.now, {locale: zhCN}) : "已过期"}}
             </span>
             <span class="estimation-cost purple darken-1 white--text"
                   v-if="item.estimate_cost !== undefined">{{item.estimate_cost}}</span>

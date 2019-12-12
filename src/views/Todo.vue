@@ -68,7 +68,7 @@
         }
 
         public async mounted() {
-            await this.todoStore.init();
+            await this.todoStore.fetchUntilSuccess();
         }
 
         private async addNew(item: Todo) {

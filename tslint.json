@@ -27,6 +27,10 @@
     ],
     "no-namespace": false,
     "max-line-length": false,
-    "no-bitwise": false
+    "no-bitwise": false,
+    "no-console": [
+      true,
+      "log"
+    ]
   }
 }

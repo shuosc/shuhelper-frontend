@@ -28,20 +28,16 @@
     import {Component, Vue} from 'vue-property-decorator';
     import {getModule} from 'vuex-module-decorators';
     import SettingsModule from '@/store/settings';
-    import {fromNullable, getOrElse, map} from 'fp-ts/lib/Option';
+    import {getOrElse, map} from 'fp-ts/lib/Option';
     import {pipe} from 'fp-ts/lib/pipeable';
 
     @Component({})
     export default class Settings extends Vue {
         private settingsStore = getModule(SettingsModule, this.$store);
 
-        get settings() {
-            return fromNullable(this.settingsStore.settings);
-        }
-
         get mode() {
             return pipe(
-                this.settings,
+                this.settingsStore.settings,
                 map((settings) => settings.mode === 'light'),
                 getOrElse(() => false)
             );
@@ -54,7 +50,7 @@
 
         get saveTodoIn() {
             return pipe(
-                this.settings,
+                this.settingsStore.settings,
                 map((settings) => settings.saveTodoIn === 'client'),
                 getOrElse(() => false)
             );
@@ -66,7 +62,7 @@
 
         get saveSettingsIn() {
             return pipe(
-                this.settings,
+                this.settingsStore.settings,
                 map((settings) => settings.saveSettingsIn === 'client'),
                 getOrElse(() => false)
             );
@@ -77,10 +73,7 @@
         }
 
         public async mounted() {
-            while (this.settingsStore.settings === null) {
-                await this.settingsStore.init();
-                await (new Promise((resolve) => setTimeout(resolve, 1000)));
-            }
+            await this.settingsStore.fetchUntilSuccess();
         }
     };
 </script>

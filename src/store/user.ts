@@ -26,7 +26,7 @@ export default class UserModule extends VuexModule {
                     .then(resolve).catch(reject);
             }) as { data: { id: string, name: string } }).data;
             this.context.commit('setUser', studentData);
-            await this.context.dispatch('settings/init', null, {root: true});
+            await this.context.dispatch('settings/fetchUntilSuccess', null, {root: true});
         } catch (e) {
             /*pass*/
         }
@@ -51,7 +51,7 @@ export default class UserModule extends VuexModule {
                     .then(resolve).catch(reject);
             }) as { data: { id: string, name: string } }).data;
             this.context.commit('setUser', studentData);
-            await this.context.dispatch('settings/init', null, {root: true});
+            await this.context.dispatch('settings/fetchUntilSuccess', null, {root: true});
         } catch (e) {
             /*pass*/
         }

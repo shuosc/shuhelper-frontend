@@ -13,7 +13,7 @@
                 <slot name="button"></slot>
             </v-btn>
         </template>
-        <v-card :class="'todo-editor-'+(initValue.type === '' ? 'unknown':initValue.type.toLowerCase())">
+        <v-card :class="'todo-editor-'+((initValue.type === '' || initValue.type === undefined) ? 'unknown':initValue.type.toLowerCase())">
             <v-card-title class="headline"
                           primary-title>
                 <slot name="headline"></slot>

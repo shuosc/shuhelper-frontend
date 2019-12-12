@@ -4,9 +4,11 @@ import {map} from 'fp-ts/es6/Option';
 import {pipe} from 'fp-ts/lib/pipeable';
 import Axios from '@/tools/axios';
 import {genNextId} from '@/tools/idGenerator';
-import {parseDateTimeInJSON} from '@/tools/dateTime';
-import {fromNullable, getOrElse} from 'fp-ts/lib/Option';
+import {fromNullable, getOrElse, isNone, none, Option, some, toNullable} from 'fp-ts/lib/Option';
 import {Vue} from 'vue-property-decorator';
+import {Settings} from '@/store/settings';
+import {sleep} from '@/tools/sleep';
+import {parseDateTimeInJSON} from '@/tools/dateTime';
 
 export interface Todo {
     id?: number,
@@ -19,35 +21,43 @@ export interface Todo {
 
 @Module({name: 'todo', namespaced: true})
 export default class TodoModule extends VuexModule {
-    private todoItems: Array<Todo> = [];
+    private todoItems: Option<Array<Todo>> = none;
 
     get orderByDueTime(): Array<Todo> {
-        return this.todoItems.sort((a: Todo, b: Todo) => {
-            if (a.due !== undefined && b.due === undefined) {
-                return -1;
-            } else if (a.due === undefined && b.due !== undefined) {
-                return 1;
-            } else if (a.due === undefined || b.due === undefined) {
-                return 0;
-            } else {
-                return a.due.getTime() - b.due.getTime();
-            }
-        });
+        return pipe(
+            this.todoItems,
+            map((items) => items.sort((a: Todo, b: Todo) => {
+                if (a.due !== undefined && b.due === undefined) {
+                    return -1;
+                } else if (a.due === undefined && b.due !== undefined) {
+                    return 1;
+                } else if (a.due === undefined || b.due === undefined) {
+                    return 0;
+                } else {
+                    return a.due.getTime() - b.due.getTime();
+                }
+            })),
+            getOrElse(() => [] as Array<Todo>)
+        );
     }
 
     get orderByLength(): Array<Todo> {
-        return this.todoItems.sort((a: Todo, b: Todo) => {
-            if (a.estimate_cost !== undefined && b.estimate_cost === undefined) {
-                return -1;
-            } else if (a.estimate_cost === undefined && b.estimate_cost !== undefined) {
-                return 1;
-            } else if (a.estimate_cost === undefined || b.estimate_cost === undefined) {
-                return 0;
-            } else {
-                return parseInt(a.estimate_cost.slice(0, a.estimate_cost.length - 1), 10)
-                    - parseInt(b.estimate_cost.slice(0, b.estimate_cost.length - 1), 10);
-            }
-        });
+        return pipe(
+            this.todoItems,
+            map((items) => items.sort((a: Todo, b: Todo) => {
+                if (a.estimate_cost !== undefined && b.estimate_cost === undefined) {
+                    return -1;
+                } else if (a.estimate_cost === undefined && b.estimate_cost !== undefined) {
+                    return 1;
+                } else if (a.estimate_cost === undefined || b.estimate_cost === undefined) {
+                    return 0;
+                } else {
+                    return parseInt(a.estimate_cost.slice(0, a.estimate_cost.length - 1), 10)
+                        - parseInt(b.estimate_cost.slice(0, b.estimate_cost.length - 1), 10);
+                }
+            })),
+            getOrElse(() => [] as Array<Todo>)
+        );
     }
 
     @Mutation
@@ -55,7 +65,7 @@ export default class TodoModule extends VuexModule {
         if (item.local_id === undefined && item.id === undefined) {
             item.local_id = genNextId();
         }
-        this.todoItems.push(item);
+        toNullable(this.todoItems)!.push(item);
     }
 
     @Mutation
@@ -64,9 +74,9 @@ export default class TodoModule extends VuexModule {
             (todoItem: Todo) => todoItem.local_id === item.local_id :
             (todoItem: Todo) => todoItem.id === item.id;
         pipe(
-            this.todoItems,
+            toNullable(this.todoItems)!,
             findIndex(isOldItem),
-            map((index) => Vue.set(this.todoItems, index, item))
+            map((index) => Vue.set(toNullable(this.todoItems)!, index, item))
         );
     }
 
@@ -76,29 +86,26 @@ export default class TodoModule extends VuexModule {
             (todoItem: Todo) => todoItem.local_id === item.local_id :
             (todoItem: Todo) => todoItem.id === item.id;
         pipe(
-            this.todoItems,
+            toNullable(this.todoItems)!,
             findIndex(isOldItem),
-            map((index) => this.todoItems.splice(index, 1))
+            map((index) => toNullable(this.todoItems)!.splice(index, 1))
         );
     }
 
     @Mutation
     public setTodoItems(items: Array<Todo>) {
-        this.todoItems = items;
+        this.todoItems = some(items);
     }
 
     @Action
     public async addItem(item: Todo) {
-        if (this.context.rootState.settings.settings.saveTodoIn === 'client') {
+        if ((toNullable(this.context.rootState.settings.settings) as Settings).saveTodoIn === 'client') {
             this.context.commit('addItemMutation', item);
-            localStorage.setItem('todoItems', JSON.stringify(this.todoItems));
+            localStorage.setItem('todoItems', JSON.stringify(toNullable(this.todoItems)));
         } else {
             const createdItem: Todo = (await Axios.post('api/todo', item)).data;
             if (createdItem.estimate_cost !== undefined) {
                 createdItem.estimate_cost = (parseInt(createdItem.estimate_cost, 10) / 1000 / 1000 / 1000 / 60) + 'm';
-            }
-            if (createdItem.type === undefined) {
-                createdItem.type = '';
             }
             this.context.commit('addItemMutation', createdItem);
         }
@@ -106,9 +113,9 @@ export default class TodoModule extends VuexModule {
 
     @Action
     public async updateItem(item: Todo) {
-        if (this.context.rootState.settings.settings.saveTodoIn === 'client') {
+        if ((toNullable(this.context.rootState.settings.settings) as Settings).saveTodoIn === 'client') {
             this.context.commit('updateItemMutation', item);
-            localStorage.setItem('todoItems', JSON.stringify(this.todoItems));
+            localStorage.setItem('todoItems', JSON.stringify(toNullable(this.todoItems)));
         } else {
             const createdItem: Todo = (await Axios.put('api/todo', item)).data;
             if (createdItem.estimate_cost !== undefined) {
@@ -120,9 +127,9 @@ export default class TodoModule extends VuexModule {
 
     @Action
     public async deleteItem(item: Todo) {
-        if (this.context.rootState.settings.settings.saveTodoIn === 'client') {
+        if ((toNullable(this.context.rootState.settings.settings) as Settings).saveTodoIn === 'client') {
             this.context.commit('deleteItemMutation', item);
-            localStorage.setItem('todoItems', JSON.stringify(this.todoItems));
+            localStorage.setItem('todoItems', JSON.stringify(toNullable(this.todoItems)));
         } else {
             await Axios.delete('api/todo', {params: {id: item.id}});
             this.context.commit('deleteItemMutation', item);
@@ -130,30 +137,45 @@ export default class TodoModule extends VuexModule {
     }
 
     @Action
-    public async init() {
-        let itemsInStorage;
-        while (this.context.rootState.settings.settings === null) {
-            await this.context.dispatch('settings/init', null, {root: true});
-            await (new Promise((resolve) => setTimeout(resolve, 1000)));
-        }
-        if (this.context.rootState.settings.settings.saveTodoIn === 'client') {
-            itemsInStorage = pipe(
-                localStorage.getItem('todoItems'),
-                fromNullable,
-                map(JSON.parse),
-                getOrElse(() => [])
-            );
-            this.context.commit('setTodoItems', parseDateTimeInJSON(itemsInStorage));
-        } else {
-            itemsInStorage = (await new Promise((resolve, reject) => Axios.get('api/todo')
-                .then(resolve).catch(reject)) as { data: Array<Todo> }).data;
-            itemsInStorage.forEach((it: Todo) => {
-                if (it.estimate_cost !== undefined) {
-                    it.estimate_cost = ((parseInt(it.estimate_cost!, 10)) / 1000 / 1000 / 1000 / 60).toString() + 'm';
+    public async fetchUntilSuccess() {
+        await this.context.dispatch('settings/fetchUntilSuccess', null, {root: true});
+        while (isNone(this.todoItems)) {
+            try {
+                let itemsInStorage;
+                if ((toNullable(this.context.rootState.settings.settings) as Settings).saveTodoIn === 'client') {
+                    itemsInStorage = pipe(
+                        localStorage.getItem('todoItems'),
+                        fromNullable,
+                        map(JSON.parse),
+                        map(parseDateTimeInJSON)
+                    );
+                } else {
+                    itemsInStorage = some(((await new Promise((resolve, reject) => (
+                        Axios.get('api/todo')
+                            .then(resolve)
+                            .catch(reject)
+                    ))) as { data: Array<Todo> }).data);
+                    pipe(
+                        itemsInStorage,
+                        map((items) => {
+                            items.forEach((it) => {
+                                if (it.estimate_cost !== undefined) {
+                                    it.estimate_cost = (parseInt(it.estimate_cost, 10) / 1000 / 1000 / 1000 / 60) + 'm';
+                                }
+                            });
+                        })
+                    );
                 }
-            });
-            itemsInStorage.forEach((it: Todo) => it.type = it.type === undefined ? '' : it.type);
-            this.context.commit('setTodoItems', itemsInStorage);
+                this.context.commit('setTodoItems', pipe(
+                    itemsInStorage,
+                    getOrElse(() => [])
+                ));
+            } catch (e) {
+                if (process.env !== 'production') {
+                    console.error(e);
+                }
+            }
+            await sleep(100);
         }
     }
 }
