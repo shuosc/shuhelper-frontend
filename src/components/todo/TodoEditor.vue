@@ -47,7 +47,7 @@
                                     label="估计时长"
                                     prepend-icon="mdi-timelapse"
                                     suffix="分钟"
-                                    type="number"
+                                    :rules="[numberOnlyRule]"
                                     v-model="estimateCost"></v-text-field>
                         </v-col>
                         <v-col cols="12" md="3" sm="6">
@@ -75,7 +75,7 @@
 <script lang="ts">
     import {Component, Prop, Vue, Watch} from 'vue-property-decorator';
     import DateTimePicker from '@/components/todo/DateTimePicker.vue';
-    import {fromNullable, map, Option, toNullable, toUndefined} from 'fp-ts/lib/Option';
+    import {filter, fromNullable, map, Option, toNullable, toUndefined} from 'fp-ts/lib/Option';
     import {pipe} from 'fp-ts/lib/pipeable';
     import {format} from 'date-fns';
     import {Todo} from '@/store/todo';
@@ -124,7 +124,7 @@
             this.$emit('changed', this.item);
         }
 
-        get estimateCost(): number | null {
+        get estimateCost(): number | string | null {
             return pipe(
                 fromNullable(this.item.estimate_cost),
                 map((it) => parseInt(it.slice(0, it.length - 1), 10)),
@@ -132,12 +132,19 @@
             );
         }
 
-        set estimateCost(minutes: number | null) {
-            this.item.estimate_cost = pipe(
-                fromNullable(minutes),
-                map((it) => it.toString() + 'm'),
-                toUndefined
-            );
+        set estimateCost(minutes: number | string | null) {
+            if (minutes === '' || minutes === null) {
+                this.item.estimate_cost = undefined;
+            } else {
+                this.item.estimate_cost = pipe(
+                    fromNullable(minutes),
+                    map((it) => parseInt(it as string, 10)),
+                    filter((it) => !isNaN(it)),
+                    filter((it) => it >= 0),
+                    map((it) => it.toString() + 'm'),
+                    toUndefined
+                );
+            }
             this.$emit('changed', this.item);
         }
 
@@ -172,6 +179,22 @@
         public onDateTimeChanged(date: Option<Date>) {
             this.dueDate = date;
             this.dueDateSelector = false;
+        }
+
+        public numberOnlyRule(value: string | number) {
+            if (value === '') {
+                return true;
+            }
+            if (typeof value !== 'number') {
+                value = parseInt(value, 10);
+            }
+            if (isNaN(value)) {
+                return '必须输入整数';
+            }
+            if (value < 0) {
+                return '必须输入正数';
+            }
+            return true;
         }
     }
 </script>
