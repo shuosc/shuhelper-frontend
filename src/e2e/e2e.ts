@@ -39,7 +39,7 @@ describe('e2e test', function() {
         expect(title).eq('SHUHelper');
     });
     it('能登录', async () => {
-        if (new Date().getHours() < 7 || new Date().getHours() > 22) {
+        if (new Date().getHours() < 7 || new Date().getHours() >= 22) {
             console.warn('此时信息办登录接口已经关闭，无法进行登录的测试！');
             return;
         }
