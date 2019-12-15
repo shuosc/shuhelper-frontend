@@ -22,8 +22,6 @@ jobs:
           script: |
             /root/deploy.sh shuhelper-frontend ${{ secrets.DOCKER_USERNAME }}/shuhelper-frontend:${{ github.sha }}
       - uses: actions/setup-node@v1
-          with:
-            node-version: '13.x'
       - name: e2e test
         run: |
           export TARGET_SITE=http://dev.cloud.shuosc.com/shuhelper/#/;
