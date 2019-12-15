@@ -7,7 +7,7 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "analyz": "NODE_ENV=production npm_config_report=true yarn build",
-    "e2e": "mocha --require ts-node/register --exit --ui bdd ./src/e2e/e2e.ts"
+    "e2e": "node ./node_modules/mocha/bin/_mocha --require ts-node/register --exit --ui bdd ./src/e2e/e2e.ts"
   },
   "dependencies": {
     "@mdi/font": "^3.6.95",
