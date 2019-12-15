@@ -105,7 +105,7 @@ export default class SettingsModule extends VuexModule {
                 this.context.commit('setAll', inStorage);
                 await sleep(100);
             } catch (e) {
-                if (process.env !== 'production') {
+                if (process.env.NODE_ENV !== 'production') {
                     console.error(e);
                 }
             }

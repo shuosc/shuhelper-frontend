@@ -171,7 +171,7 @@ export default class TodoModule extends VuexModule {
                     getOrElse(() => [])
                 ));
             } catch (e) {
-                if (process.env !== 'production') {
+                if (process.env.NODE_ENV !== 'production') {
                     console.error(e);
                 }
             }
