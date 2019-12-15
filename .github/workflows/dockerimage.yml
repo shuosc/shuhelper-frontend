@@ -21,3 +21,15 @@ jobs:
           port: 22
           script: |
             /root/deploy.sh shuhelper-frontend ${{ secrets.DOCKER_USERNAME }}/shuhelper-frontend:${{ github.sha }}
+      - name: e2e test
+          - uses: actions/checkout@v1
+          - uses: actions/setup-node@v1
+              with:
+                node-version: 13.x
+          - run: |
+        export TARGET_SITE=http://dev.cloud.shuosc.com/shuhelper/#/;
+        export E2E_USERNAME=${{ secrets.E2E_USERNAME }};
+        export E2E_PASSWORD=${{ secrets.E2E_PASSWORD }};
+        export E2E_NAME=${{ secrets.E2E_NAME }};
+        npm install
+        npm e2e
