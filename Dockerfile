@@ -2,7 +2,6 @@ FROM node:alpine as builder
 COPY . /shuhelper-frontend
 WORKDIR /shuhelper-frontend
 RUN rm -rf ./src/e2e
-ENV NODE_ENV=production
 RUN npm install -g yarn && yarn && yarn build
 
 FROM nginx:alpine
