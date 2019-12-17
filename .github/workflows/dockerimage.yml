@@ -5,7 +5,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/setup-node@v1
       - uses: actions/checkout@v1
+      - name: Install dependencies
+        run: |
+          npm install
+      - name: Unit tests
+        run: |
+          export TS_NODE_COMPILER_OPTIONS={\"module\":\"commonjs\"};
+          npm run test
       - name: Build the Docker image
         run: |
           docker build . -t shuhelper-frontend
@@ -21,13 +29,10 @@ jobs:
           port: 22
           script: |
             /root/deploy.sh shuhelper-frontend ${{ secrets.DOCKER_USERNAME }}/shuhelper-frontend:${{ github.sha }}
-      - uses: actions/setup-node@v1
       - name: e2e test
         run: |
-          export TS_NODE_COMPILER_OPTIONS={\"module\":\"commonjs\"};
           export TARGET_SITE=http://dev.cloud.shuosc.com/shuhelper/#/;
           export E2E_USERNAME=${{ secrets.E2E_USERNAME }};
           export E2E_PASSWORD=${{ secrets.E2E_PASSWORD }};
           export E2E_NAME=${{ secrets.E2E_NAME }};
-          npm install
           npm run e2e

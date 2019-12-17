@@ -838,6 +838,11 @@
     "@types/minimatch" "*"
     "@types/node" "*"
 
+"@types/json5@^0.0.29":
+  version "0.0.29"
+  resolved "https://registry.npmjs.org/@types/json5/-/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"
+  integrity sha1-7ihweulOEdK4J7y+UnC86n8+ce4=
+
 "@types/minimatch@*":
   version "3.0.3"
   resolved "https://registry.npm.taobao.org/@types/minimatch/download/@types/minimatch-3.0.3.tgz#3dca0e3f33b200fc7d1139c0cd96c1268cadfd9d"
@@ -4864,10 +4869,10 @@ jsesc@~0.5.0:
   resolved "https://registry.npm.taobao.org/jsesc/download/jsesc-0.5.0.tgz#e7dee66e35d6fc16f710fe91d5cf69f70f08911d"
   integrity sha1-597mbjXW/Bb3EP6R1c9p9w8IkR0=
 
-json-interface2class@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.npm.taobao.org/json-interface2class/download/json-interface2class-1.0.0.tgz?cache=0&sync_timestamp=1574272278788&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fjson-interface2class%2Fdownload%2Fjson-interface2class-1.0.0.tgz#db52bc3eeb977923fa3d138e50146d79961c15a7"
-  integrity sha1-21K8PuuXeSP6PROOUBRteZYcFac=
+json-interface2class@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.npmjs.org/json-interface2class/-/json-interface2class-1.0.2.tgz#e2e964a57e92c13243058ef70f6f162dd1bf3351"
+  integrity sha512-Lpk8FWEnAjjWv6SCp3HfBG/2D/+irR3k1/GDU6eUXP1om60ZZKpLvK+HhHySDhiaSd68Hp+k0oavcTWBEFMuSQ==
 
 json-parse-better-errors@^1.0.1, json-parse-better-errors@^1.0.2:
   version "1.0.2"
@@ -7838,6 +7843,11 @@ strip-ansi@^6.0.0:
   dependencies:
     ansi-regex "^5.0.0"
 
+strip-bom@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.npmjs.org/strip-bom/-/strip-bom-3.0.0.tgz#2334c18e9c759f7bdd56fdef7e9ae3d588e68ed3"
+  integrity sha1-IzTBjpx1n3vdVv3vfprj1YjmjtM=
+
 strip-eof@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npm.taobao.org/strip-eof/download/strip-eof-1.0.0.tgz#bb43ff5598a6eb05d89b59fcd129c983313606bf"
@@ -8150,6 +8160,16 @@ ts-node@^8.5.4:
     make-error "^1.1.1"
     source-map-support "^0.5.6"
     yn "^3.0.0"
+
+tsconfig-paths@^3.9.0:
+  version "3.9.0"
+  resolved "https://registry.npmjs.org/tsconfig-paths/-/tsconfig-paths-3.9.0.tgz#098547a6c4448807e8fcb8eae081064ee9a3c90b"
+  integrity sha512-dRcuzokWhajtZWkQsDVKbWyY+jgcLC5sqJhg2PSgf4ZkH2aHPvaOY8YWGhmjb68b5qqTfasSsDO9k7RUiEmZAw==
+  dependencies:
+    "@types/json5" "^0.0.29"
+    json5 "^1.0.1"
+    minimist "^1.2.0"
+    strip-bom "^3.0.0"
 
 tslib@^1.8.0, tslib@^1.8.1, tslib@^1.9.0:
   version "1.10.0"

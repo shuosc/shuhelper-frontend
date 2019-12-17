@@ -7,6 +7,7 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "analyz": "NODE_ENV=production npm_config_report=true yarn build",
+    "test":"node ./node_modules/mocha/bin/_mocha --require ts-node/register --require tsconfig-paths/register --exit --ui bdd ./src/**/*.spec.ts",
     "e2e": "node ./node_modules/mocha/bin/_mocha --require ts-node/register --exit --ui bdd ./src/e2e/e2e.ts"
   },
   "dependencies": {
@@ -15,7 +16,7 @@
     "core-js": "^3.3.2",
     "date-fns": "^2.8.0",
     "fp-ts": "^2.1.2",
-    "json-interface2class": "^1.0.0",
+    "json-interface2class": "^1.0.2",
     "roboto-fontface": "*",
     "vue": "^2.6.10",
     "vue-class-component": "^7.0.2",
@@ -41,6 +42,7 @@
     "stylus": "^0.54.7",
     "stylus-loader": "^3.0.2",
     "ts-node": "^8.5.4",
+    "tsconfig-paths": "^3.9.0",
     "typescript": "~3.5.3",
     "vue-cli-plugin-vuetify": "^2.0.2",
     "vue-template-compiler": "^2.6.10",
