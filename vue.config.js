@@ -17,14 +17,13 @@ module.exports = {
             new SWPrecacheWebpackPlugin({
                 cacheId: 'my-vue-app',
                 filename: 'service-worker.js',
-                staticFileGlobs: ['dist/**/*.{js,html,css}'],
+                staticFileGlobs: ['dist/**/*.{js,html,css,woff,woff2,ttf,png}'],
                 minify: true,
                 stripPrefix: 'dist/',
-                runtimeCaching: [
-                    {
-                        urlPattern: /^http(s?):\/\/*\/*/,
-                        handler: 'cacheFirst'
-                    },
+                runtimeCaching: [{
+                    urlPattern: /^http(s?):\/\/*\/*/,
+                    handler: 'cacheFirst'
+                },
                 ]
             }),
             new BundleAnalyzerPlugin({
