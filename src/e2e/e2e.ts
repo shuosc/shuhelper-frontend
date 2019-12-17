@@ -1,8 +1,6 @@
 import 'mocha';
 import {launch, Page} from 'puppeteer';
 import {expect} from 'chai';
-import {format} from 'date-fns';
-import {zhCN} from 'date-fns/locale';
 
 async function click(page: Page, selector: string) {
   await page.evaluate(
@@ -12,10 +10,9 @@ async function click(page: Page, selector: string) {
 }
 
 async function getTextContent(page: Page, selector: string): Promise<string> {
-  return await page.evaluate(
-    (selectorValue) => {
-      return (document.querySelector(selectorValue) as HTMLElement).innerText;
-    }, selector);
+  return await page.evaluate((selectorValue) => {
+    return (document.querySelector(selectorValue) as HTMLElement).innerText;
+  }, selector);
 }
 
 async function login(page: Page) {
@@ -41,11 +38,6 @@ describe('e2e test', function() {
     expect(title).eq('SHUHelper');
   });
   it('能登录', async () => {
-    const hourInChina = parseInt(format(new Date(), 'k', {locale: zhCN}), 10);
-    if (hourInChina < 7 || hourInChina >= 22) {
-      console.warn('此时信息办登录接口已经关闭，无法进行登录的测试！');
-      return;
-    }
     const browser = await launch({args: ['--no-sandbox']});
     const page = await browser.newPage();
     await page.goto(process.env.TARGET_SITE!);
