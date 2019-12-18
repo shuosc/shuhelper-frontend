@@ -15,7 +15,7 @@ module.exports = {
     configureWebpack: {
         plugins: [
             new SWPrecacheWebpackPlugin({
-                cacheId: 'my-vue-app',
+                cacheId: 'shuhelper',
                 filename: 'service-worker.js',
                 staticFileGlobs: ['dist/**/*.{js,html,css,woff,woff2,ttf,png}'],
                 minify: true,
@@ -23,8 +23,7 @@ module.exports = {
                 runtimeCaching: [{
                     urlPattern: /^http(s?):\/\/*\/*/,
                     handler: 'cacheFirst'
-                },
-                ]
+                }]
             }),
             new BundleAnalyzerPlugin({
                 analyzerMode: process.env.npm_config_report === 'true' ? 'server' : 'disabled',
