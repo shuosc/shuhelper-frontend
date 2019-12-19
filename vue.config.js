@@ -1,11 +1,17 @@
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
+
 module.exports = {
     publicPath: '/shuhelper/',
     pwa: {
         name: "SHUHelper",
+        workboxPluginMode: 'InjectManifest',
         workboxOptions: {
-            importWorkboxFrom: 'local'
+            swSrc: 'src/service-worker.js',
+            globDirectory: 'dist/',
+            globPatterns: [
+                '**/*.{html,json,js,css,ttf,woff,woff2,png}'
+            ],
+            importWorkboxFrom: 'local',
         }
     },
     transpileDependencies: [
@@ -14,17 +20,6 @@ module.exports = {
     ],
     configureWebpack: {
         plugins: [
-            new SWPrecacheWebpackPlugin({
-                cacheId: 'shuhelper',
-                filename: 'service-worker.js',
-                staticFileGlobs: ['dist/**/*.{js,html,css,woff,woff2,ttf,png}'],
-                minify: true,
-                stripPrefix: 'dist/',
-                runtimeCaching: [{
-                    urlPattern: /^http(s?):\/\/*\/*/,
-                    handler: 'cacheFirst'
-                }]
-            }),
             new BundleAnalyzerPlugin({
                 analyzerMode: process.env.npm_config_report === 'true' ? 'server' : 'disabled',
                 analyzerHost: '127.0.0.1',
@@ -38,26 +33,5 @@ module.exports = {
                 logLevel: 'info'
             })
         ]
-    },
-    chainWebpack: config => {
-        config.resolve.symlinks(true);
-        config.plugin('preload').tap(options => {
-            options[0] = {
-                rel: 'preload',
-                as(entry) {
-                    if (/\.css$/.test(entry)) return 'style';
-                    if (/\.(woff||ttf)$/.test(entry)) return 'font';
-                    if (/\.png$/.test(entry)) return 'image';
-                    return 'script';
-                },
-                include: 'allAssets',
-                fileBlacklist: [/\.map$/, /hot-update\.js$/],
-            };
-            return options
-        });
-        config.plugin('workbox').tap((workbox) => {
-
-        });
-        return config
     },
 };

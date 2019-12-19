@@ -52,47 +52,52 @@
 </template>
 
 <script lang="ts">
-    import {Component, Vue} from 'vue-property-decorator';
-    import UserModule from '@/store/user';
-    import {getModule} from 'vuex-module-decorators';
-    import {getOrElse, isSome, map, toNullable} from 'fp-ts/lib/Option';
-    import {pipe} from 'fp-ts/lib/pipeable';
-    import SettingsModule, {Settings} from '@/store/settings';
+  import {Component, Vue} from 'vue-property-decorator';
+  import UserModule from '@/store/user';
+  import {getModule} from 'vuex-module-decorators';
+  import {getOrElse, isSome, map, toNullable} from 'fp-ts/lib/Option';
+  import {pipe} from 'fp-ts/lib/pipeable';
+  import SettingsModule, {Settings} from '@/store/settings';
 
-    @Component({
-        methods: {getOrElse, map, pipe, isSome}
-    })
-    export default class Default extends Vue {
-        private drawer = false;
-        private miniVariant = false;
-        private title = 'SHUHelper';
-        private userStore = getModule(UserModule, this.$store);
+  @Component({
+    methods: {getOrElse, map, pipe, isSome}
+  })
+  export default class Default extends Vue {
+    private drawer = false;
+    private miniVariant = false;
+    private title = 'SHUHelper';
+    private userStore = getModule(UserModule, this.$store);
 
-        private items = [
-            {icon: 'school', title: '首页', to: '/'},
-            {icon: 'calendar', title: '校历', to: '/school-calendar'},
-            {icon: 'file-document-box-multiple-outline', title: '待办事项', to: '/todo'},
-            {icon: 'settings', title: '设置', to: '/settings'}
-        ];
+    private items = [
+      {icon: 'school', title: '首页', to: '/'},
+      {icon: 'calendar', title: '校历', to: '/school-calendar'},
+      {icon: 'file-document-box-multiple-outline', title: '待办事项', to: '/todo'},
+      {icon: 'settings', title: '设置', to: '/settings'}
+    ];
 
-        public async mounted() {
-            const settingsStore = getModule(SettingsModule, this.$store);
-            await settingsStore.fetchUntilSuccess();
-            (this as any).$vuetify.theme.dark = toNullable(settingsStore.settings)!.mode === 'dark';
-            this.$store.watch((state) => state.settings.settings, (newSettings: Settings) => {
-                (this as any).$vuetify.theme.dark = newSettings.mode === 'dark';
-            });
+    public async mounted() {
+      const settingsStore = getModule(SettingsModule, this.$store);
+      await settingsStore.fetchUntilSuccess();
+      (this as any).$vuetify.theme.dark = toNullable(settingsStore.settings)!.mode === 'dark';
+      this.$store.watch((state) => state.settings.settings, (newSettings: Settings) => {
+        (this as any).$vuetify.theme.dark = newSettings.mode === 'dark';
+      });
+    }
+
+    private auth() {
+      if (isSome(this.userStore.user)) {
+        localStorage.removeItem('token');
+        if (navigator.serviceWorker.controller) {
+          navigator.serviceWorker.controller.postMessage({
+            type: 'LOGOUT'
+          });
         }
-
-        private auth() {
-            if (isSome(this.userStore.user)) {
-                localStorage.removeItem('token');
-                window.location.assign('/shuhelper/');
-            } else {
-                this.$router.push('/login');
-            }
-        }
-    };
+        window.location.assign('/shuhelper/');
+      } else {
+        this.$router.push('/login');
+      }
+    }
+  };
 </script>
 
 <style>

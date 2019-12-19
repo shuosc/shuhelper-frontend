@@ -1,11 +1,9 @@
 import Axios from 'axios';
 import {parseDateTimeInJSON} from '@/tools/dateTime';
-import { cacheAdapterEnhancer } from 'axios-extensions';
 const instance = Axios.create({
     baseURL: process.env.NODE_ENV === 'development' ?
         'http://dev.cloud.shuosc.com/' :
         '/',
-    adapter: cacheAdapterEnhancer(Axios.defaults.adapter!)
 });
 
 const Requesting = new Set<string>();
