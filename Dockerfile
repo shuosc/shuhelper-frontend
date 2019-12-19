@@ -2,7 +2,7 @@ FROM node:alpine as builder
 COPY . /shuhelper-frontend
 WORKDIR /shuhelper-frontend
 RUN rm -rf ./src/e2e
-RUN npm install -g yarn && yarn && yarn build
+RUN yarn && yarn build
 
 FROM nginx:alpine
 COPY --from=builder /shuhelper-frontend/dist/ /usr/share/nginx/html/
