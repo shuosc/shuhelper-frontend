@@ -6,7 +6,7 @@ module.exports = {
         name: "SHUHelper",
         workboxPluginMode: 'InjectManifest',
         appleMobileWebAppCapable: 'yes',
-        appleMobileWebAppStatusBarStyle: 'black-translucent',
+        appleMobileWebAppStatusBarStyle: 'black',
         workboxOptions: {
             swSrc: 'src/service-worker.js',
             globDirectory: 'dist/',
