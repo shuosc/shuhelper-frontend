@@ -31,10 +31,8 @@ describe('e2e test', function() {
   it('能访问', async () => {
     const browser = await launch({args: ['--no-sandbox']});
     const page = await browser.newPage();
-    await page.setViewport({width: 1024, height: 768});
     await page.goto(process.env.TARGET_SITE!);
-    const title = await page.evaluate(() =>
-      document.getElementsByClassName('v-toolbar__title')[0].textContent);
+    const title = await getTextContent(page, '.toolbar__title');
     expect(title).eq('SHUHelper');
   });
   it('能登录', async () => {
