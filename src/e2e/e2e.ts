@@ -32,7 +32,7 @@ describe('e2e test', function() {
     const browser = await launch({args: ['--no-sandbox']});
     const page = await browser.newPage();
     await page.goto(process.env.TARGET_SITE!);
-    const title = await getTextContent(page, '.toolbar__title');
+    const title = await getTextContent(page, '.v-toolbar__title');
     expect(title).eq('SHUHelper');
   });
   it('能登录', async () => {

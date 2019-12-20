@@ -24,10 +24,9 @@
                             </template>
                         </v-col>
                         <v-col class="pb-0 pt-0" cols="12" md="6" v-if="this.pipe(
-                            dateTimeStore.currentDateTimeInSemester,
-                            this.chain(DateTimeInSemesterService.getHoliday),
-                            this.isSome)"
-                        >
+                                                    dateTimeStore.currentDateTimeInSemester,
+                                                    this.chain(DateTimeInSemesterService.getHoliday),
+                                                    this.isSome)">
                             现在正在放{{
                             this.pipe(
                             dateTimeStore.currentDateTimeInSemester,
@@ -57,82 +56,82 @@
 </template>
 
 <script lang="ts">
-    import {Component, Vue} from "vue-property-decorator";
-    import {getModule} from "vuex-module-decorators";
-    import SemesterModule from "@/store/semester";
-    import {differenceInCalendarDays, format} from "date-fns";
-    import {zhCN} from "date-fns/locale";
-    import DateTimeModule from "@/store/dateTime";
-    import {avatarSize} from "@/tools/avatarSize";
-    import {chain, isSome, map, Option, option, some, toNullable} from "fp-ts/lib/Option";
-    import {pipe} from "fp-ts/lib/pipeable";
-    import {DateTimeInSemester, DateTimeInSemesterService} from "@/model/semester/dateTimeInSemester";
-    import {sequenceT} from "fp-ts/lib/Apply";
-    import {Holiday} from "@/model/semester/holiday/holiday";
-    import {SemesterService} from "@/model/semester/semester";
-    import {toPercent} from "@/tools/toPercent";
+  import {Component, Vue} from "vue-property-decorator";
+  import {getModule} from "vuex-module-decorators";
+  import SemesterModule from "@/store/semester";
+  import {differenceInCalendarDays, format} from "date-fns";
+  import {zhCN} from "date-fns/locale";
+  import DateTimeModule from "@/store/dateTime";
+  import {avatarSize} from "@/tools/avatarSize";
+  import {chain, isSome, map, Option, option, some, toNullable} from "fp-ts/lib/Option";
+  import {pipe} from "fp-ts/lib/pipeable";
+  import {DateTimeInSemester, DateTimeInSemesterService} from "@/model/semester/dateTimeInSemester";
+  import {sequenceT} from "fp-ts/lib/Apply";
+  import {Holiday} from "@/model/semester/holiday/holiday";
+  import {SemesterService} from "@/model/semester/semester";
+  import {toPercent} from "@/tools/toPercent";
 
-    @Component({
-        methods: {
-            format,
-            avatarSize,
-            isSome,
-            toNullable,
-            pipe,
-            map,
-            chain
-        }
-    })
-    export default class DateInfo extends Vue {
-        private readonly zhCN = zhCN;
-        private dateTimeStore = getModule(DateTimeModule, this.$store);
-        private semesterStore = getModule(SemesterModule, this.$store);
-        private DateTimeInSemesterService = DateTimeInSemesterService;
+  @Component({
+    methods: {
+      format,
+      avatarSize,
+      isSome,
+      toNullable,
+      pipe,
+      map,
+      chain
+    }
+  })
+  export default class DateInfo extends Vue {
+    private readonly zhCN = zhCN;
+    private dateTimeStore = getModule(DateTimeModule, this.$store);
+    private semesterStore = getModule(SemesterModule, this.$store);
+    private DateTimeInSemesterService = DateTimeInSemesterService;
 
-        private mounted() {
-            this.semesterStore.fetchByDateTime();
-        }
+    private mounted() {
+      this.semesterStore.fetchByDateTime();
+    }
 
-        get nextHoliday(): Option<Holiday> {
-            return pipe(
-                this.dateTimeStore.currentDateTimeInSemester,
-                chain(DateTimeInSemesterService.getNextHoliday)
-            );
-        }
+    get nextHoliday(): Option<Holiday> {
+      return pipe(
+        this.dateTimeStore.currentDateTimeInSemester,
+        chain(DateTimeInSemesterService.getNextHoliday)
+      );
+    }
 
-        get daysToNextHoliday() {
-            return pipe(
-                sequenceT(option)(this.nextHoliday, some(this.dateTimeStore.now)),
-                map(([nextHoliday, now]: [Interval, Date]) => differenceInCalendarDays(nextHoliday.start, now))
-            );
-        }
+    get daysToNextHoliday() {
+      return pipe(
+        sequenceT(option)(this.nextHoliday, some(this.dateTimeStore.now)),
+        map(([nextHoliday, now]: [Interval, Date]) => differenceInCalendarDays(nextHoliday.start, now))
+      );
+    }
 
-        get finishedWorkingDays(): Option<number> {
-            return pipe(
-                sequenceT(option)(
-                    this.dateTimeStore.currentDateTimeInSemester,
-                    map((it: DateTimeInSemester) => it.semester.start)(this.dateTimeStore.currentDateTimeInSemester),
-                    some(this.dateTimeStore.now)
-                ),
-                map(([dateTimeInSemester, from, to]) =>
-                    SemesterService.getWorkingDayCount(dateTimeInSemester.semester, from, to))
-            );
-        }
+    get finishedWorkingDays(): Option<number> {
+      return pipe(
+        sequenceT(option)(
+          this.dateTimeStore.currentDateTimeInSemester,
+          map((it: DateTimeInSemester) => it.semester.start)(this.dateTimeStore.currentDateTimeInSemester),
+          some(this.dateTimeStore.now)
+        ),
+        map(([dateTimeInSemester, from, to]) =>
+          SemesterService.getWorkingDayCount(dateTimeInSemester.semester, from, to))
+      );
+    }
 
-        get totalWorkingDays(): Option<number> {
-            return pipe(
-                this.dateTimeStore.currentDateTimeInSemester,
-                map((it) => SemesterService.getTotalWorkingDayCount(it.semester))
-            );
-        }
+    get totalWorkingDays(): Option<number> {
+      return pipe(
+        this.dateTimeStore.currentDateTimeInSemester,
+        map((it) => SemesterService.getTotalWorkingDayCount(it.semester))
+      );
+    }
 
-        get finishedDaysPercentage(): Option<number> {
-            return pipe(
-                sequenceT(option)(this.finishedWorkingDays, this.totalWorkingDays),
-                map(([finished, total]) => toPercent(finished, total))
-            );
-        }
-    };
+    get finishedDaysPercentage(): Option<number> {
+      return pipe(
+        sequenceT(option)(this.finishedWorkingDays, this.totalWorkingDays),
+        map(([finished, total]) => toPercent(finished, total))
+      );
+    }
+  };
 </script>
 
 <style scoped>

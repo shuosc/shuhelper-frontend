@@ -19,7 +19,7 @@
                         :xSmall="false"
                         @ok="addNew">
                     <template v-slot:button>
-                        <v-icon small>mdi-library-plus</v-icon>
+                        <v-icon small>mdi-note-plus</v-icon>
                     </template>
                     <template v-slot:headline>
                         新建

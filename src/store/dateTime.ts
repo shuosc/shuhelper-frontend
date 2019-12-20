@@ -4,6 +4,7 @@ import {pipe} from 'fp-ts/lib/pipeable';
 import {addMinutes} from 'date-fns';
 import {DateTimeInSemester} from '@/model/semester/dateTimeInSemester';
 import {Semester} from '@/model/semester/semester';
+import {createDate, createTime, mergeDateTime} from "@/tools/dateTime";
 
 @Module({name: 'dateTime', namespaced: true})
 export default class DateTimeModule extends VuexModule {
@@ -31,9 +32,10 @@ export default class DateTimeModule extends VuexModule {
   public start() {
     if (this.intervalId === 0) {
       if (process.env.NODE_ENV === 'development') {
+        this.nowBuffer = mergeDateTime(createDate(2019, 12, 31), createTime(8, 30));
         this.intervalId = setInterval(() => {
           this.nowBuffer = addMinutes(this.nowBuffer, 1);
-        }, 500);
+        }, 100);
       } else {
         this.intervalId = setInterval(() => {
           this.nowBuffer = new Date();
