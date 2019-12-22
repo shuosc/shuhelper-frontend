@@ -40,6 +40,7 @@
     "chai": "^4.2.0",
     "lint-staged": "^9.4.2",
     "mocha": "^6.2.2",
+    "nyc": "^14.1.1",
     "puppeteer": "^2.0.0",
     "sass": "^1.19.0",
     "sass-loader": "^8.0.0",

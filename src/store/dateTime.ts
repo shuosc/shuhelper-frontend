@@ -32,9 +32,9 @@ export default class DateTimeModule extends VuexModule {
   public start() {
     if (this.intervalId === 0) {
       if (process.env.NODE_ENV === 'development') {
-        this.nowBuffer = mergeDateTime(createDate(2019, 12, 31), createTime(8, 30));
+        this.nowBuffer = mergeDateTime(createDate(2019, 12, 30), createTime(12, 0));
         this.intervalId = setInterval(() => {
-          this.nowBuffer = addMinutes(this.nowBuffer, 1);
+          this.nowBuffer = addMinutes(this.nowBuffer, 5);
         }, 100);
       } else {
         this.intervalId = setInterval(() => {

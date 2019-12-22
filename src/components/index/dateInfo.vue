@@ -36,7 +36,7 @@
                             }}!
                         </v-col>
                         <v-col class="pb-0 pt-0" cols="12" v-else-if="this.isSome(nextHoliday)">
-                            <template v-if="this.toNullable(daysToNextHoliday) !== 0">
+                            <template v-if="this.toNullable(daysToNextHoliday) !== 1">
                                 距离下个假期 {{toNullable(nextHoliday).name}} 还有
                                 {{toNullable(daysToNextHoliday)}} 天
                             </template>

@@ -1,11 +1,11 @@
 import {Semester} from '@/model/semester/semester';
-import {addDays, eachWeekOfInterval, getDay, isAfter, isBefore, isSameDay, isWithinInterval} from 'date-fns';
+import {addDays, eachWeekOfInterval, getDay, isAfter, isBefore, isSameDay} from 'date-fns';
 import {findFirst, findIndex, lookup} from 'fp-ts/lib/Array';
 import {chain, getOrElse, map, Option} from 'fp-ts/lib/Option';
 import {Holiday} from '@/model/semester/holiday/holiday';
 import {pipe} from 'fp-ts/lib/pipeable';
 import {partial} from '@/tools/partial';
-import {extractTime} from '@/tools/dateTime';
+import {extractTime, isWithInIntervalExclusiveEnd} from '@/tools/dateTime';
 import {SectorRepository, SectorService} from '@/model/sector';
 import {last} from 'fp-ts/lib/NonEmptyArray';
 
@@ -44,7 +44,7 @@ export namespace DateTimeInSemesterService {
           }
         }
       }
-      if (isWithinInterval(dateTime.dateTime, holiday)) {
+      if (isWithInIntervalExclusiveEnd(dateTime.dateTime, holiday)) {
         return HOLIDAY;
       }
     }
@@ -52,7 +52,7 @@ export namespace DateTimeInSemesterService {
   }
 
   export function getHoliday(dateTime: DateTimeInSemester): Option<Holiday> {
-    return findFirst(partial(isWithinInterval, dateTime.dateTime))(dateTime.semester.holidays);
+    return findFirst(partial(isWithInIntervalExclusiveEnd, dateTime.dateTime))(dateTime.semester.holidays);
   }
 
   export function getNextHoliday(dateTime: DateTimeInSemester): Option<Holiday> {
@@ -78,7 +78,7 @@ export namespace DateTimeInSemesterService {
     }
     return pipe(
       findIndex((week: Interval) =>
-        isWithinInterval(dateTime.dateTime, week))(getWorkingWeeks(dateTime.semester)),
+        isWithInIntervalExclusiveEnd(dateTime.dateTime, week))(getWorkingWeeks(dateTime.semester)),
       map((it: number) => it + 1),
       getOrElse(() => 0)
     );
@@ -116,6 +116,6 @@ export namespace DateTimeInSemesterService {
    * 找出现在正在进行的课间休息时间
    */
   export function currentRest(dateTime: DateTimeInSemester): Option<Interval> {
-    return findFirst((it: Interval) => isWithinInterval(extractTime(dateTime.dateTime), it))(SectorRepository.rests);
+    return findFirst((it: Interval) => isWithInIntervalExclusiveEnd(extractTime(dateTime.dateTime), it))(SectorRepository.rests);
   }
 }
