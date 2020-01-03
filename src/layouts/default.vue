@@ -45,8 +45,8 @@
                 <slot></slot>
             </v-container>
         </v-content>
-        <v-footer app>
-            <span>&copy; 2017 ~ {{(new Date()).getFullYear() }}</span>
+        <v-footer app class="d-flex flex-row justify-center align-center">
+            <a href="http://www.beian.miit.gov.cn">沪ICP备19044115号</a>
         </v-footer>
     </v-app>
 </template>
@@ -113,5 +113,9 @@
         height: 1em;
         font-size: 1em;
         line-height: 1em;
+    }
+
+    a {
+        text-decoration: none;
     }
 </style>

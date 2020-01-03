@@ -43,7 +43,7 @@
                             <template v-else>下个假期 {{toNullable(nextHoliday).name}} 明天就开始！</template>
                         </v-col>
                         <v-col class="pb-1 pt-1" cols="12" v-if="this.isSome(finishedDaysPercentage)">
-                            <v-progress-linear v-model="this.toNullable(finishedDaysPercentage)"></v-progress-linear>
+                            <v-progress-linear :value="this.toNullable(finishedDaysPercentage)"></v-progress-linear>
                         </v-col>
                         <v-col class="pb-0 pt-0" cols="12" v-if="this.isSome(finishedDaysPercentage)">
                             已经过了 {{toNullable(totalWorkingDays)}} 个工作日中的 {{toNullable(finishedWorkingDays)}} 天
