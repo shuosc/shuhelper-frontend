@@ -34,6 +34,7 @@ export default class UserModule extends VuexModule {
 
     @Action
     public async login(info: { username: string, password: string }) {
+        // todo: be universe!
         const courseSelectionUrl = (await new Promise((resolve, reject) => {
             Axios.get('api/course-selection-url?id=11')
                 .then(resolve).catch(reject);

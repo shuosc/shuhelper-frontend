@@ -26,33 +26,33 @@
 </template>
 
 <script lang="ts">
-    import {Component, Vue} from "vue-property-decorator";
-    import {getModule} from "vuex-module-decorators";
-    import UserModule from "@/store/user";
+  import {Component, Vue} from "vue-property-decorator";
+  import {getModule} from "vuex-module-decorators";
+  import UserModule from "@/store/user";
 
-    @Component({})
-    export default class Login extends Vue {
-        private username = "";
-        private password = "";
-        private disabled = false;
-        private showLoginFailed = false;
+  @Component({})
+  export default class Login extends Vue {
+    private username = "";
+    private password = "";
+    private disabled = false;
+    private showLoginFailed = false;
 
-        public async login() {
-            this.disabled = true;
-            try {
-                await getModule(UserModule, this.$store).login({username: this.username, password: this.password});
-                this.disabled = false;
-                await this.$router.push("/");
-            } catch (e) {
-                this.disabled = false;
-                this.showLoginFailed = true;
-                this.password = "";
-                window.setTimeout(() => this.showLoginFailed = false, 3000);
-            } finally {
-                this.disabled = false;
-            }
-        }
-    };
+    public async login() {
+      this.disabled = true;
+      try {
+        await getModule(UserModule, this.$store).login({username: this.username, password: this.password});
+        this.disabled = false;
+        await this.$router.push("/");
+      } catch (e) {
+        this.disabled = false;
+        this.showLoginFailed = true;
+        this.password = "";
+        window.setTimeout(() => this.showLoginFailed = false, 3000);
+      } finally {
+        this.disabled = false;
+      }
+    }
+  };
 </script>
 
 <style scoped>
